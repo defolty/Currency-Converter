@@ -1,3 +1,5 @@
+# !!! Needs to be refactored !!! Maybe soon))
+
 ### Simple currency converter with online real-time conversion iOS 10+
 - rapidapi.com
 - MVC.

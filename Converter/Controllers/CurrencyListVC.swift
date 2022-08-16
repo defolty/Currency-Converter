@@ -4,14 +4,16 @@
 //
 //  Created by Nikita Nesporov on 19.12.2021.
 //
-
-// fromCurrency
-// toCurrency
-
+ 
 import UIKit
  
 protocol MyDataSendingDelegateProtocol: AnyObject {
-    func sendStringToAny(myString: String, inputButton: String)
+    func sendStringToAny(myString: String, inputButton: SelectedButton)
+}
+
+enum SelectedButton {
+    case firstButton
+    case secondButton
 }
  
 extension CurrencyListVC {
@@ -38,28 +40,26 @@ extension CurrencyListVC {
        return cell
    }
     
-   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { 
-       let specS = selectedButton
-       
+   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
        switch selectedButton {
-       case "firstButton":
+       case .firstButton:
            if activeSearch {
-               selectedDelegate?.sendStringToAny(myString: filterKeys[indexPath.row], inputButton: specS)
+               selectedDelegate?.sendStringToAny(myString: filterKeys[indexPath.row], inputButton: .firstButton)
                navigationController?.popViewController(animated: true)
            } else {
-               selectedDelegate?.sendStringToAny(myString: onlyKeys![indexPath.row], inputButton: specS) // до search bar
+               selectedDelegate?.sendStringToAny(myString: onlyKeys![indexPath.row], inputButton: .firstButton) // до search bar
                navigationController?.popViewController(animated: true)
            } 
-       case "secondButton":
+       case .secondButton:
            if activeSearch {
-               selectedDelegate?.sendStringToAny(myString: filterKeys[indexPath.row], inputButton: specS)
+               selectedDelegate?.sendStringToAny(myString: filterKeys[indexPath.row], inputButton: .secondButton)
                navigationController?.popViewController(animated: true)
            } else {
-               selectedDelegate?.sendStringToAny(myString: onlyKeys![indexPath.row], inputButton: specS) // до search bar
+               selectedDelegate?.sendStringToAny(myString: onlyKeys![indexPath.row], inputButton: .secondButton) // до search bar
                navigationController?.popViewController(animated: true)
            }
-       default:
-           print("error 333")
+       case .none:
+           print("something wrong selected button")
        }
    }
 }
@@ -100,29 +100,24 @@ extension CurrencyListVC: UISearchBarDelegate {
 class CurrencyListVC: UITableViewController {
      
     @IBOutlet var searchBar: UISearchBar!
-    var activeSearch = false
-    
     @IBOutlet var mainTableView: UITableView!
     
-    let activityIndicator = ActivityIndicator()
-    
-    weak var selectedDelegate: MyDataSendingDelegateProtocol?
-     
     var dataCurrencies: DataCurrency?
-    
     var currencyArray: [String: String]?
-    
     var onlyKeys: [String]? = []
     var onlyValues: [String]? = []
     var filterKeys: [String] = []
+    let activityIndicator = ActivityIndicator()
+    var activeSearch = false
+    var selectedButton: SelectedButton?
+//    var receivedString = "" {
+//        didSet {
+//            selectedButton = receivedString
+//        }
+//    }
     
-    var selectedButton = ""
-    var receivedString = "" {
-        didSet {
-            selectedButton = receivedString
-        }
-    }
-     
+    weak var selectedDelegate: MyDataSendingDelegateProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
          
@@ -145,35 +140,29 @@ class CurrencyListVC: UITableViewController {
             navigationItem.hidesSearchBarWhenScrolling = true
         }
     }
-     
-    //MARK: - подгрузки данных наименования валюты
-    
-    func newFetch() { 
-        let request = NSMutableURLRequest(url: NSURL(string: Constants.urlString)! as URL,
-                                          cachePolicy: .useProtocolCachePolicy,
-                                          timeoutInterval: 10.0)
+      
+    func newFetch() {
+        let request = NSMutableURLRequest(
+            url: NSURL(string: Constants.urlString)! as URL,
+            cachePolicy: .useProtocolCachePolicy,
+            timeoutInterval: 10.0
+        )
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = Constants.headers
-        
         self.view.addSubview(activityIndicator)
-        
         URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
             guard let data = data else { return }
             do {
                 self.dataCurrencies = try JSONDecoder().decode(DataCurrency.self, from: data)
-                
                 self.currencyArray = self.dataCurrencies?.currencies
-                
                 self.dataCurrencies?.currencies.forEach({ currency in
                     self.onlyKeys?.append(currency.key)
                     self.onlyValues?.append(currency.value)
                 })
-                   
                 DispatchQueue.main.async {
                     self.tableView.reloadData() 
                     self.activityIndicator.hide()
                 }
-                
             } catch let error {
                 print("Error serialization", error)
             } 

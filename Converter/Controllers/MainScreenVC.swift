@@ -15,18 +15,15 @@ extension MainScreenVC: UITextFieldDelegate {
 }
 
 extension MainScreenVC: MyDataSendingDelegateProtocol {
-    func sendStringToAny(myString: String, inputButton: String) {
+    func sendStringToAny(myString: String, inputButton: SelectedButton) {
          
         switch inputButton {
-        case "firstButton":
+        case .firstButton:
             firstChangeCurrency.setTitle(myString, for: .normal)
             fromValue = myString
-        case "secondButton":
+        case .secondButton:
             secondChangeCurrency.setTitle(myString, for: .normal)
-            toValue = myString
-        default:
-            print("fucking shit")
-            break
+            toValue = myString 
         }
     }
 }
@@ -97,12 +94,12 @@ class MainScreenVC: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "fromCurrency" {
             if let nextVC = segue.destination as? CurrencyListVC {
-                nextVC.receivedString = "firstButton"
+                nextVC.selectedButton = .firstButton
                 nextVC.selectedDelegate = self
             }
         } else {
             if let nextVC = segue.destination as? CurrencyListVC {
-                nextVC.receivedString = "secondButton"
+                nextVC.selectedButton = .secondButton
                 nextVC.selectedDelegate = self
             }
         }

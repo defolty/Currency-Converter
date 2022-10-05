@@ -9,7 +9,7 @@ import UIKit
 
 class ActivityIndicator: UIVisualEffectView {
     
-    let activityIndictor: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.whiteLarge)
+    let activityIndictor: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
     let label: UILabel = UILabel()
     let blurEffect = UIBlurEffect(style: .dark)
     let vibrancyView: UIVisualEffectView
@@ -62,4 +62,5 @@ class ActivityIndicator: UIVisualEffectView {
     
     func hide() {
         self.isHidden = true
-    }}
+    } 
+}

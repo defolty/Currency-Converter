@@ -6,8 +6,7 @@
 //
 
 import UIKit
-  
-
+   
 extension MainScreenVC: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         textField.validInput(textField: textField, range: range, string: string, numberOfCharacter: 6, maxDecimalPlaces: 2)
@@ -23,7 +22,7 @@ extension MainScreenVC: MyDataSendingDelegateProtocol {
             fromValue = myString
         case .secondButton:
             secondChangeCurrency.setTitle(myString, for: .normal)
-            toValue = myString 
+            toValue = myString
         }
     }
 }
@@ -42,7 +41,7 @@ class MainScreenVC: UIViewController {
     
     @IBOutlet var resultLabel: UILabel!
     
-    private var convertData: ConvertCurrensy? 
+    private var convertData: ConvertCurrency? 
     let activityIndicator = ActivityIndicator()
     
     var fromValue = "USD"
@@ -197,7 +196,7 @@ class MainScreenVC: UIViewController {
             URLSession.shared.dataTask(with: selectedRequest as URLRequest) { (data, response, error) in
                 guard let data = data else { return }
                 do {
-                    self.convertData = try JSONDecoder().decode(ConvertCurrensy.self, from: data)
+                    self.convertData = try JSONDecoder().decode(ConvertCurrency.self, from: data)
                     self.convertData?.amount = String(self.fromTextField)
                     self.completeUpdateDate = self.convertData?.updatedDate ?? "\nnothing 1"
                     
@@ -220,7 +219,7 @@ class MainScreenVC: UIViewController {
             URLSession.shared.dataTask(with: selectedRequest as URLRequest) { (data, response, error) in
                 guard let data = data else { return }
                 do {
-                    self.convertData = try JSONDecoder().decode(ConvertCurrensy.self, from: data)
+                    self.convertData = try JSONDecoder().decode(ConvertCurrency.self, from: data)
                     self.convertData?.amount = String(self.fromTextField)
                     self.completeUpdateDate = self.convertData?.updatedDate ?? "\nnothing 1"
                      

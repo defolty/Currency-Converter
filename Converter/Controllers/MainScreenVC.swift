@@ -41,7 +41,7 @@ class MainScreenVC: UIViewController {
     
     @IBOutlet var resultLabel: UILabel!
     
-    private var convertData: ConvertCurrency? 
+    private var convertData: ExchangeCurrenciesData? 
     let activityIndicator = ActivityIndicator()
     
     var fromValue = "USD"
@@ -196,13 +196,13 @@ class MainScreenVC: UIViewController {
             URLSession.shared.dataTask(with: selectedRequest as URLRequest) { (data, response, error) in
                 guard let data = data else { return }
                 do {
-                    self.convertData = try JSONDecoder().decode(ConvertCurrency.self, from: data)
+                    self.convertData = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
                     self.convertData?.amount = String(self.fromTextField)
                     self.completeUpdateDate = self.convertData?.updatedDate ?? "\nnothing 1"
                     
                     DispatchQueue.main.async(execute: { [self]() -> Void in
                          
-                            self.firstFieldNumber = self.convertData?.rates?.first?.value.rate_for_amount ?? "000"
+                            self.firstFieldNumber = self.convertData?.rates?.first?.value.rateForAmount ?? "000"
                             let doubleFirstValue = Double(self.firstFieldNumber)
                             let roundDouble = floor(10000 * doubleFirstValue!) / 10000
                             self.activityIndicator.hide()
@@ -219,20 +219,20 @@ class MainScreenVC: UIViewController {
             URLSession.shared.dataTask(with: selectedRequest as URLRequest) { (data, response, error) in
                 guard let data = data else { return }
                 do {
-                    self.convertData = try JSONDecoder().decode(ConvertCurrency.self, from: data)
+                    self.convertData = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
                     self.convertData?.amount = String(self.fromTextField)
                     self.completeUpdateDate = self.convertData?.updatedDate ?? "\nnothing 1"
                      
                     DispatchQueue.main.async(execute: { [self]() -> Void in
                         if textField == self.firstCurrency {
-                            self.firstFieldNumber = self.convertData?.rates?.first?.value.rate_for_amount ?? "000"
+                            self.firstFieldNumber = self.convertData?.rates?.first?.value.rateForAmount ?? "000"
                             let doubleFirstValue = Double(self.firstFieldNumber)
                             let roundDouble = floor(10000 * doubleFirstValue!) / 10000
                             self.activityIndicator.hide()
                             self.secondCurrency.text = String(roundDouble) //String(roundDouble)
                             firstValueForReplace = roundDouble
                         } else if textField == self.secondCurrency {
-                            self.secondFieldNumber = self.convertData?.rates?.first?.value.rate_for_amount ?? "000"
+                            self.secondFieldNumber = self.convertData?.rates?.first?.value.rateForAmount ?? "000"
                             let doubleSecondValue = Double(self.secondFieldNumber)
                             let roundDouble = round(10000 * doubleSecondValue!) / 10000
                             self.activityIndicator.hide()

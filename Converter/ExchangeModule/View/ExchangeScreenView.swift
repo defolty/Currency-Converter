@@ -7,37 +7,46 @@
 
 import UIKit
 import SnapKit
-
-enum CurrentSelectedButton {
-    case firstButton, secondButton
-}
-
+ 
 enum CurrentActiveTextField {
     case firstTextField, secondTextField
 }
+
+extension ExchangeScreenView: ExchangeViewProtocol {
+    func success() {
+        
+    }
+    
+    func failure(error: Error) {
+        print("error ExchangeScreenView func failure", error.localizedDescription)
+    }
+}
  
 class ExchangeScreenView: UIViewController {
+     
+    var firstButtonTitle = "USD"
+    var secondButtonTitle = "RUB"
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        //scrollView.backgroundColor = .lightGray
         return scrollView
     }()
     
     private let contentView: UIView = {
         let contentView = UIView()
-        //contentView.backgroundColor = .systemGray2
         contentView.layer.cornerRadius = 12
         return contentView
     }()
-     
-    private let swapValues: UIImageView = {
-        let imageView = UIImageView()
-        //imageView.image = UIImage(named: "Swap")
-        imageView.image = UIImage(systemName: "arrow.up.arrow.down.square")
-        imageView.layer.cornerRadius = 12
-        imageView.sizeToFit()
-        return imageView
+      
+    private lazy var swapValue: UIButton = {
+        let swapButton = UIButton()
+        let config = UIImage.SymbolConfiguration(pointSize: 100, weight: .regular, scale: .default)
+        let image = UIImage(systemName: "arrow.up.arrow.down.square", withConfiguration: config)
+        swapButton.setImage(image, for: .normal)
+        swapButton.tintColor = .systemIndigo
+        swapButton.addTarget(self, action: #selector(selectCurrency), for: .touchUpInside)
+        self.view.addSubview(swapButton)
+        return swapButton
     }()
     
     private lazy var firstCurrencyTextField: UITextField = {
@@ -49,7 +58,6 @@ class ExchangeScreenView: UIViewController {
         textfield.keyboardType = .numberPad
         textfield.layer.cornerRadius = 12
         textfield.isUserInteractionEnabled = true
-        textfield.addTarget(textfield, action: #selector(firstTextField), for: .touchUpInside)
         self.view.addSubview(textfield)
         return textfield
     }()
@@ -108,21 +116,12 @@ class ExchangeScreenView: UIViewController {
         //navigationController?.pushViewController(selectedVC, animated: true)
         print("tapped")
     }
-    
-    @objc private func firstTextField(sender: UITextField) {
-        print("tapped")
-    }
-    
+     
     // MARK: - Setup Views
     
     private func addSubviews() {
         view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        contentView.addSubview(swapValues)
-        //contentView.addSubview(firstCurrencySelectionButton)
-        //contentView.addSubview(firstCurrencyTextField)
-        //contentView.addSubview(secondCurrencySelectionButton)
-        //contentView.addSubview(secondCurrencyTextField)
+        scrollView.addSubview(contentView) 
     }
     
     private func setupNavigationBar() {
@@ -152,7 +151,7 @@ class ExchangeScreenView: UIViewController {
             make.width.equalTo(80)
             make.height.equalTo(80)
             make.leading.equalTo(view).offset(30)
-            make.bottom.equalTo(swapValues.snp.top).offset(-5)
+            make.bottom.equalTo(swapValue.snp.top).offset(-5)
         }
 
         firstCurrencyTextField.snp.makeConstraints { make in
@@ -162,7 +161,7 @@ class ExchangeScreenView: UIViewController {
             make.centerY.equalTo(firstCurrencySelectionButton)
         }
         
-        swapValues.snp.makeConstraints { make in
+        swapValue.snp.makeConstraints { make in
             make.width.equalTo(50)
             make.height.equalTo(50)
             make.centerX.equalTo(firstCurrencySelectionButton)
@@ -173,7 +172,7 @@ class ExchangeScreenView: UIViewController {
             make.width.equalTo(80)
             make.height.equalTo(80)
             make.centerX.equalTo(firstCurrencySelectionButton)
-            make.top.equalTo(swapValues.snp.bottom).offset(5)
+            make.top.equalTo(swapValue.snp.bottom).offset(5)
         }
 
         secondCurrencyTextField.snp.makeConstraints { make in
@@ -185,13 +184,13 @@ class ExchangeScreenView: UIViewController {
     }
 }
 
-#if DEBUG
-import SwiftUI
-
-struct HomeViewController_Preview: PreviewProvider {
-    static var previews: some View = Preview(
-        for: ExchangeScreenView()
-    )
-}
-#endif
+//#if DEBUG
+//import SwiftUI
+//
+//struct HomeViewController_Preview: PreviewProvider {
+//    static var previews: some View = Preview(
+//        for: ExchangeScreenView()
+//    )
+//}
+//#endif
  

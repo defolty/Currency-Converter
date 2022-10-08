@@ -6,16 +6,11 @@
 //
  
 import UIKit
- 
-protocol MyDataSendingDelegateProtocol: AnyObject {
-    func sendStringToAny(myString: String, inputButton: SelectedButton)
-}
-
-enum SelectedButton {
-    case firstButton
-    case secondButton
-}
- 
+// 
+//protocol MyDataSendingDelegateProtocol: AnyObject {
+//    func sendStringToAny(myString: String, inputButton: SelectedButton)
+//}
+// 
 extension CurrencyListVC {
     
    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { 
@@ -102,7 +97,7 @@ class CurrencyListVC: UITableViewController {
     @IBOutlet var searchBar: UISearchBar!
     @IBOutlet var mainTableView: UITableView!
     
-    var dataCurrencies: DataCurrency?
+    var dataCurrencies: CurrenciesListData?
     var currencyArray: [String: String]?
     var onlyKeys: [String]? = []
     var onlyValues: [String]? = []
@@ -143,7 +138,7 @@ class CurrencyListVC: UITableViewController {
       
     func newFetch() {
         let request = NSMutableURLRequest(
-            url: NSURL(string: Constants.urlString)! as URL,
+            url: NSURL(string: Constants.currenciesListUrl)! as URL,
             cachePolicy: .useProtocolCachePolicy,
             timeoutInterval: 10.0
         )
@@ -153,7 +148,7 @@ class CurrencyListVC: UITableViewController {
         URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
             guard let data = data else { return }
             do {
-                self.dataCurrencies = try JSONDecoder().decode(DataCurrency.self, from: data)
+                self.dataCurrencies = try JSONDecoder().decode(CurrenciesListData.self, from: data)
                 self.currencyArray = self.dataCurrencies?.currencies
                 self.dataCurrencies?.currencies.forEach({ currency in
                     self.onlyKeys?.append(currency.key)

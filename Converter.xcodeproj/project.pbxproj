@@ -17,6 +17,7 @@
 		FBAB0EE328F17E7400E242DE /* CurrenciesListViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EE228F17E7400E242DE /* CurrenciesListViewPresenter.swift */; };
 		FBAB0EE828F1873900E242DE /* AssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EE728F1873900E242DE /* AssemblyBuilder.swift */; };
 		FBAB0EEA28F1875F00E242DE /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EE928F1875F00E242DE /* Router.swift */; };
+		FBAB0EED28F48ED600E242DE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EEC28F48ED600E242DE /* SceneDelegate.swift */; };
 		FBC7780F28EDCBA200C9FB1D /* ExchangeScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC7780E28EDCBA200C9FB1D /* ExchangeScreenView.swift */; };
 		FBC7781228EDF3E000C9FB1D /* LivePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC7781128EDF3E000C9FB1D /* LivePreview.swift */; };
 		FBDAA3AE2798BD6500CB89B7 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDAA3AD2798BD6500CB89B7 /* Extensions.swift */; };
@@ -43,6 +44,7 @@
 		FBAB0EE228F17E7400E242DE /* CurrenciesListViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesListViewPresenter.swift; sourceTree = "<group>"; };
 		FBAB0EE728F1873900E242DE /* AssemblyBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssemblyBuilder.swift; sourceTree = "<group>"; };
 		FBAB0EE928F1875F00E242DE /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		FBAB0EEC28F48ED600E242DE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		FBC7780E28EDCBA200C9FB1D /* ExchangeScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeScreenView.swift; sourceTree = "<group>"; };
 		FBC7781128EDF3E000C9FB1D /* LivePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePreview.swift; sourceTree = "<group>"; };
 		FBDAA3AD2798BD6500CB89B7 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				FB62EECA276BCE0C00BDB70D /* AppDelegate.swift */,
+				FBAB0EEC28F48ED600E242DE /* SceneDelegate.swift */,
 				FB62EED3276BCE0C00BDB70D /* Assets.xcassets */,
 				FB62EED5276BCE0C00BDB70D /* LaunchScreen.storyboard */,
 			);
@@ -353,6 +356,7 @@
 				FB62EECB276BCE0C00BDB70D /* AppDelegate.swift in Sources */,
 				FBFF2A6A28EE293E00D3FCBF /* ExchangeModel.swift in Sources */,
 				FBEAD4B22772346F00DDD50E /* CurrencyListVC.swift in Sources */,
+				FBAB0EED28F48ED600E242DE /* SceneDelegate.swift in Sources */,
 				FBC7780F28EDCBA200C9FB1D /* ExchangeScreenView.swift in Sources */,
 				FBAB0EEA28F1875F00E242DE /* Router.swift in Sources */,
 				FBAB0EE828F1873900E242DE /* AssemblyBuilder.swift in Sources */,

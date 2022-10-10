@@ -14,7 +14,7 @@ protocol RouterMain {
 
 protocol RouterProtocol: RouterMain {
     func initialViewController()
-    func showCurrenciesList(currency: ExchangeCurrenciesData?)
+    func showCurrenciesList()
     func popToRoot()
 }
 
@@ -30,14 +30,14 @@ class Router: RouterProtocol {
     
     func initialViewController() {
         if let navigationController {
-            guard let echangeViewController = assemblyBuilder?.createExchangeModule(router: self) else { return }
-            navigationController.viewControllers = [echangeViewController]
+            guard let exchangeVC = assemblyBuilder?.createExchangeModule(router: self) else { return }
+            navigationController.viewControllers = [exchangeVC]
         }
     }
     
-    func showCurrenciesList(currency: ExchangeCurrenciesData?) {
+    func showCurrenciesList() {
         if let navigationController {
-            guard let currenciesVC = assemblyBuilder?.createCurrenciesListModule(currency: currency, router: self) else { return }
+            guard let currenciesVC = assemblyBuilder?.createCurrenciesListModule(router: self) else { return }
             navigationController.pushViewController(currenciesVC, animated: true)
         }
     }

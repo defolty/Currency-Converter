@@ -5,6 +5,7 @@
 //  Created by Nikita Nesporov on 17.12.2021.
 //
 
+/*
 import UIKit
    
 extension MainScreenVC: UITextFieldDelegate {
@@ -14,7 +15,7 @@ extension MainScreenVC: UITextFieldDelegate {
 }
 
 extension MainScreenVC: MyDataSendingDelegateProtocol {
-    func sendStringToAny(myString: String, inputButton: SelectedButton) {
+    func sendStringToAny(myString: String, inputButton: SelectedButtonCondition) {
          
         switch inputButton {
         case .firstButton:
@@ -326,3 +327,4 @@ class MainScreenVC: UIViewController {
 }
    
  
+ */

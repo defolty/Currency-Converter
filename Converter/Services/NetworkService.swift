@@ -8,12 +8,14 @@
 import Foundation
 
 protocol NetworkServiceProtocol {
+    typealias exchangeCompletion = (Result<ExchangeCurrenciesData?, Error>) -> Void
     func getCurrenciesList(completion: @escaping (Result<CurrenciesListData?, Error>) -> Void)
-    func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: Double)
-    func sendExchangeRequest(request: NSMutableURLRequest)
+    func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion)
 }
 
 class NetworkService: NetworkServiceProtocol {
+    
+    typealias exchangeComplition = (Result<ExchangeCurrenciesData?, Error>) -> Void
     
     func getCurrenciesList(completion: @escaping (Result<CurrenciesListData?, Error>) -> Void) {
         let request = NSMutableURLRequest(
@@ -37,7 +39,7 @@ class NetworkService: NetworkServiceProtocol {
         }.resume()
     }
     
-    func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: Double) {
+    func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion) {
         let url = "\(Constants.firstPartUrl)\(fromValue)&to=\(toValue)&amount=\(amount)&apiKey=\(Constants.apiKey)&format=json"
         let request = NSMutableURLRequest(
             url: NSURL(string: url)! as URL,
@@ -55,24 +57,36 @@ class NetworkService: NetworkServiceProtocol {
         reverseRequest.httpMethod = "GET"
         reverseRequest.allHTTPHeaderFields = Constants.headers
         
-        sendExchangeRequest(request: request)
-        //sendExchangeRequest(request: reverseRequest)
-    }
-    
-    func sendExchangeRequest(request: NSMutableURLRequest) {
-        URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
+        URLSession.shared.dataTask(with: request as URLRequest) { data, _, error in
             guard let data else { return }
             do {
                 let convertingRate = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
-                
                 DispatchQueue.main.async {
-                    print(convertingRate)
+                    print("sendExchangeRequest network service - ", convertingRate)
                 }
             } catch let error {
                 print("Error serialization", error)
             }
         }.resume()
+        
+        //sendExchangeRequest(request: request)
+        //sendExchangeRequest(request: reverseRequest)
     }
+    
+//    func sendExchangeRequest(request: NSMutableURLRequest) {
+//        URLSession.shared.dataTask(with: request as URLRequest) { data, _, error in
+//            guard let data else { return }
+//            do {
+//                let convertingRate = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
+//
+//                DispatchQueue.main.async {
+//                    print("sendExchangeRequest network service - ", convertingRate)
+//                }
+//            } catch let error {
+//                print("Error serialization", error)
+//            }
+//        }.resume()
+//    }
 }
 
 /*

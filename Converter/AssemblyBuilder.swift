@@ -8,24 +8,35 @@
 import UIKit
 
 protocol AssemblyBuilderProtocol {
+//    exchangeModel: ExchangeCurrenciesData?,
+//    activeTextField: ActiveTextField
     func createExchangeModule(router: RouterProtocol) -> UIViewController
-    func createCurrenciesListModule(currency didSelected: ExchangeCurrenciesData?, router: RouterProtocol) -> UIViewController
+//    selectedButton: SelectedButtonCondition
+    func createCurrenciesListModule(router: RouterProtocol) -> UIViewController
 }
 
 class AssemblyModuleBuilder: AssemblyBuilderProtocol {
+    
     func createExchangeModule(router: RouterProtocol) -> UIViewController {
         let view = ExchangeScreenView()
         let networkService = NetworkService()
-        let presenter = ExchangePresenter(view: view, model: <#T##ExchangeModel#>)
+        let presenter = ExchangePresenter(
+            view: view,
+            networkService: networkService,
+            router: router
+        )
         view.presenter = presenter
-        ///# + от такого способа это возможность подставить другой объект, например другой `vc` для тестов
         return view
     }
     
-    func createDetailModule(comment: Comment?, router: RouterProtocol) -> UIViewController {
-        let view = DetailView()
+    func createCurrenciesListModule(router: RouterProtocol) -> UIViewController {
+        let view = CurrenciesListView()
         let networkService = NetworkService()
-        let presenter = DetailPresenter(view: view, networkService: networkService, router: router, comment: comment)
+        let presenter = CurrenciesListPresenter(
+            view: view,
+            networkService: networkService,
+            router: router 
+        )
         view.presenter = presenter
         return view
     }

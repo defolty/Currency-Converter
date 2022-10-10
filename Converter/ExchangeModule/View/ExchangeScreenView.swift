@@ -7,14 +7,27 @@
 
 import UIKit
 import SnapKit
- 
-enum CurrentActiveTextField {
-    case firstTextField, secondTextField
-}
 
 extension ExchangeScreenView: ExchangeViewProtocol {
-    func success() {
+    func updateViews(buttonCondition: SelectedButtonCondition, activeTextField: ActiveTextField) {
         
+        switch buttonCondition {
+        case .fromButton:
+            self.firstCurrencySelectionButton.setTitle(
+                presenter.firstSelectedCurrency,
+                for: .normal)
+        case .toButton:
+            self.secondCurrencySelectionButton.setTitle(
+                presenter.secondSelectedCurrency,
+                for: .normal) 
+        }
+        
+        switch activeTextField {
+        case .firstTextField:
+            self.presenter.exchangeCurrencies()
+        case .secondTextField:
+            self.presenter.exchangeCurrencies()
+        }
     }
     
     func failure(error: Error) {
@@ -24,8 +37,7 @@ extension ExchangeScreenView: ExchangeViewProtocol {
  
 class ExchangeScreenView: UIViewController {
      
-    var firstButtonTitle = "USD"
-    var secondButtonTitle = "RUB"
+    var presenter: ExchangeViewPresenterProtocol!
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -40,11 +52,22 @@ class ExchangeScreenView: UIViewController {
       
     private lazy var swapValue: UIButton = {
         let swapButton = UIButton()
-        let config = UIImage.SymbolConfiguration(pointSize: 100, weight: .regular, scale: .default)
-        let image = UIImage(systemName: "arrow.up.arrow.down.square", withConfiguration: config)
+        let config = UIImage.SymbolConfiguration(
+            pointSize: 100,
+            weight: .regular,
+            scale: .default
+        )
+        let image = UIImage(
+            systemName: "arrow.up.arrow.down.square",
+            withConfiguration: config
+        )
         swapButton.setImage(image, for: .normal)
         swapButton.tintColor = .systemIndigo
-        swapButton.addTarget(self, action: #selector(selectCurrency), for: .touchUpInside)
+        swapButton.addTarget(
+            self,
+            action: #selector(selectCurrency),
+            for: .touchUpInside
+        )
         self.view.addSubview(swapButton)
         return swapButton
     }()
@@ -112,9 +135,15 @@ class ExchangeScreenView: UIViewController {
     }
     
     @objc private func selectCurrency(sender: UIButton) {
-        //let selectedButton: CurrentSelectedButton = sender.tag == 1 ? .firstButton : .secondButton
-        //navigationController?.pushViewController(selectedVC, animated: true)
-        print("tapped")
+//        let selectedButton: SelectedButtonCondition = sender.tag == 1 ? .fromButton : .toButton
+        if let presenter {
+            presenter.tapOnButton()
+        } else {
+            print("error router presenter.tapOnButton()")
+        }
+//        let svc = CurrenciesListView()
+//        present(svc, animated: true, completion: nil)
+        print("tapped to select currency") 
     }
      
     // MARK: - Setup Views

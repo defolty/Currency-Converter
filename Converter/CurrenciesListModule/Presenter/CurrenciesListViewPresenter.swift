@@ -7,35 +7,39 @@
 
 import Foundation
 
+// что должен уметь делать presenter для list view:
+// - получать список валют - ок
+// - получать выбранную кнопку
+// - отправлять выбранную валюту в exchange view
+ 
 protocol CurrenciesListViewProtocol: AnyObject {
     func success()
     func failure(error: Error)
-    func sendCurrency(currency: String)
 }
- 
+  
 protocol CurrenciesListViewPresenterProtocol: AnyObject {
     init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?)
-    //var currencyDelegate: SelectedCurrencyDelegate? { get set }
-    //var buttonCondition: SelectedButton { get }
-    var currenciesList: [String]? { get set }
     func getCurrenciesList()
+    func popToRoot()
+    var currenciesList: [String]? { get set } 
 }
-
+ 
 class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
-     
+    
     weak var view: CurrenciesListViewProtocol?
-    var currencyTitle: SelectedCurrencyDelegate?
     let networkService: NetworkServiceProtocol!
     var router: RouterProtocol?
     var currenciesList: [String]?
-    
-    //var buttonCondition: SelectedButton
-    //var currencyDelegate: SelectedCurrencyDelegate?
-    
+     
     required init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
         self.view = view
         self.networkService = networkService
         self.router = router
+        getCurrenciesList()
+    }
+    
+    func popToRoot() {
+        router?.popToRoot()
     }
     
     func getCurrenciesList() {

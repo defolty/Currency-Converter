@@ -5,6 +5,8 @@
 //  Created by Nikita Nesporov on 19.12.2021.
 //
  
+/*
+ 
 import UIKit
 // 
 //protocol MyDataSendingDelegateProtocol: AnyObject {
@@ -104,7 +106,7 @@ class CurrencyListVC: UITableViewController {
     var filterKeys: [String] = []
     let activityIndicator = ActivityIndicator()
     var activeSearch = false
-    var selectedButton: SelectedButton?
+    var selectedButton: SelectedButtonCondition?
 //    var receivedString = "" {
 //        didSet {
 //            selectedButton = receivedString
@@ -165,3 +167,5 @@ class CurrencyListVC: UITableViewController {
     }
 }
  
+
+*/

@@ -4,25 +4,29 @@
 //
 //  Created by Nikita Nesporov on 08.10.2022.
 //
-
+ 
 import UIKit
 
 class CurrenciesListView: UIViewController {
     
     private let tableView = UITableView()
     private var safeArea: UILayoutGuide!
-    private var presenter: CurrenciesListViewPresenterProtocol!
+    var presenter: CurrenciesListViewPresenterProtocol!
     
     override func loadView() {
         super.loadView()
         
-        view.backgroundColor = .green
+        view.backgroundColor = .red
         safeArea = view.layoutMarginsGuide
         setupTableView()
+        print("load view success")
     }
-    
+     
     private func setupTableView() {
         view.addSubview(tableView)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.delegate = self
+        tableView.dataSource = self
         tableView.backgroundColor = .gray
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
@@ -39,8 +43,9 @@ extension CurrenciesListView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-         
-        cell.textLabel?.text = presenter.currenciesList?[indexPath.row] 
+        
+        let currentCurrency = presenter.currenciesList?[indexPath.row] 
+        cell.textLabel?.text = currentCurrency
         
         return cell
     }
@@ -48,14 +53,11 @@ extension CurrenciesListView: UITableViewDataSource {
 
 extension CurrenciesListView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath.row) 
+        presenter.popToRoot()
     }
 }
 
 extension CurrenciesListView: CurrenciesListViewProtocol {
-    func sendCurrency(currency: String) {
-        presenter
-    }
     
     func success() {
         tableView.reloadData()

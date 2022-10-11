@@ -8,25 +8,31 @@
 import UIKit
 import SnapKit
 
+extension ExchangeScreenView: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+//        let field: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField
+//        presenter.getValuesFromView(activeField: field, value: textField.text ?? "ERR")
+    }
+}
+
 extension ExchangeScreenView: ExchangeViewProtocol {
-    func updateViews(buttonCondition: SelectedButtonCondition, activeTextField: ActiveTextField) {
-        
-        switch buttonCondition {
-        case .fromButton:
-            self.firstCurrencySelectionButton.setTitle(
-                presenter.firstSelectedCurrency,
-                for: .normal)
-        case .toButton:
-            self.secondCurrencySelectionButton.setTitle(
-                presenter.secondSelectedCurrency,
-                for: .normal) 
-        }
-        
-        switch activeTextField {
+    
+    func updateViews(field: ActiveTextField) {
+        print("5")
+        firstCurrencySelectionButton.setTitle(
+            presenter.firstSelectedCurrency,
+            for: .normal)
+        secondCurrencySelectionButton.setTitle(
+            presenter.secondSelectedCurrency,
+            for: .normal)
+          
+        switch field {
         case .firstTextField:
-            self.presenter.exchangeCurrencies()
+            print("updateViews case .firstTextField")
+            secondCurrencyTextField.text = presenter.valueForSecondField
         case .secondTextField:
-            self.presenter.exchangeCurrencies()
+            print("updateViews case .secondTextField")
+            firstCurrencyTextField.text = presenter.valueForFirstField
         }
     }
     
@@ -78,9 +84,13 @@ class ExchangeScreenView: UIViewController {
         textfield.textAlignment = .center
         textfield.textColor = .white
         textfield.backgroundColor = .systemPink
-        textfield.keyboardType = .numberPad
+        textfield.keyboardType = .decimalPad
         textfield.layer.cornerRadius = 12
         textfield.isUserInteractionEnabled = true
+        textfield.clearButtonMode = .whileEditing
+        textfield.clearsOnBeginEditing = true
+        textfield.delegate = self
+        textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
         self.view.addSubview(textfield)
         return textfield
     }()
@@ -91,9 +101,13 @@ class ExchangeScreenView: UIViewController {
         textfield.textAlignment = .center
         textfield.textColor = .white
         textfield.backgroundColor = .systemPink
-        textfield.keyboardType = .numberPad
+        textfield.keyboardType = .decimalPad
         textfield.layer.cornerRadius = 12
         textfield.isUserInteractionEnabled = true
+        textfield.clearButtonMode = .whileEditing
+        textfield.clearsOnBeginEditing = true
+        textfield.delegate = self
+        textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
         self.view.addSubview(textfield)
         return textfield
     }()
@@ -132,6 +146,7 @@ class ExchangeScreenView: UIViewController {
         addSubviews()
         setupNavigationBar()
         setupConstaints()
+        initialValues()
     }
     
     @objc private func selectCurrency(sender: UIButton) {
@@ -141,9 +156,14 @@ class ExchangeScreenView: UIViewController {
         } else {
             print("error router presenter.tapOnButton()")
         }
-//        let svc = CurrenciesListView()
-//        present(svc, animated: true, completion: nil)
-        print("tapped to select currency") 
+    }
+    
+    @objc private func textFieldsDidEditing(textField: UITextField) {
+        print("6")
+        guard let text = textField.text else { return }
+        let activeField: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField
+        
+        presenter.getValuesFromView(field: activeField, value: text)
     }
      
     // MARK: - Setup Views
@@ -210,6 +230,16 @@ class ExchangeScreenView: UIViewController {
             make.height.equalTo(secondCurrencySelectionButton)
             make.width.equalTo(firstCurrencyTextField)
         }
+    }
+    
+    private func initialValues() {
+        print("1")
+        presenter.firstSelectedCurrency = "EUR"
+        presenter.secondSelectedCurrency = "USD"
+        presenter.amount = "100"
+        presenter.selectedButton = .fromButton
+        firstCurrencyTextField.text = presenter.amount
+        presenter.getValuesFromView(field: .firstTextField, value: "100")
     }
 }
 

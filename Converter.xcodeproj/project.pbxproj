@@ -109,7 +109,6 @@
 				FB62EED8276BCE0C00BDB70D /* Info.plist */,
 				FBAB0EEB28F19FAA00E242DE /* WillDelete */,
 				FBEA9C48276E7545004BF24C /* Supporting Files */,
-				FBEAD4B627723B7C00DDD50E /* Controllers */,
 				FBEAD4B527723B3B00DDD50E /* Helpers */,
 				FBAB0EDE28F17CFA00E242DE /* Services */,
 				FBAB0EDF28F17DC700E242DE /* ExchangeModule */,
@@ -166,6 +165,7 @@
 		FBAB0EEB28F19FAA00E242DE /* WillDelete */ = {
 			isa = PBXGroup;
 			children = (
+				FBEAD4B627723B7C00DDD50E /* Controllers */,
 				FBFF2A6928EE293E00D3FCBF /* ExchangeModel.swift */,
 			);
 			path = WillDelete;

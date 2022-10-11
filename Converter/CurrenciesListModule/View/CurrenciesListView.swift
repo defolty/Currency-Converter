@@ -15,8 +15,7 @@ class CurrenciesListView: UIViewController {
     
     override func loadView() {
         super.loadView()
-        
-        view.backgroundColor = .red
+         
         safeArea = view.layoutMarginsGuide
         setupTableView()
         print("load view success")
@@ -27,7 +26,6 @@ class CurrenciesListView: UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.backgroundColor = .gray
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
         tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true

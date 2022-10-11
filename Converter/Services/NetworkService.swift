@@ -25,7 +25,7 @@ class NetworkService: NetworkServiceProtocol {
         )
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = Constants.headers
-        URLSession.shared.dataTask(with: request as URLRequest) { data, _, error in
+        URLSession.shared.dataTask(with: request as URLRequest) { (data, _, error) in
             guard let data else { return }
             if let error {
                 completion(.failure(error))
@@ -57,15 +57,17 @@ class NetworkService: NetworkServiceProtocol {
         reverseRequest.httpMethod = "GET"
         reverseRequest.allHTTPHeaderFields = Constants.headers
         
-        URLSession.shared.dataTask(with: request as URLRequest) { data, _, error in
+        URLSession.shared.dataTask(with: request as URLRequest) { (data, _, error) in
             guard let data else { return }
             do {
                 let convertingRate = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
                 DispatchQueue.main.async {
                     print("sendExchangeRequest network service - ", convertingRate)
+                    completion(.success(convertingRate))
                 }
             } catch let error {
                 print("Error serialization", error)
+                completion(.failure(error))
             }
         }.resume()
         

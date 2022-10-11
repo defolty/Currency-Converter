@@ -38,13 +38,16 @@ class Router: RouterProtocol {
     func showCurrenciesList() {
         if let navigationController {
             guard let currenciesVC = assemblyBuilder?.createCurrenciesListModule(router: self) else { return }
-            navigationController.pushViewController(currenciesVC, animated: true)
+            //navigationController.pushViewController(currenciesVC, animated: true)
+            //let svc = CurrenciesListView()
+            navigationController.present(currenciesVC, animated: true, completion: nil)
         }
     }
     
     func popToRoot() {
         if let navigationController {
-            navigationController.popToRootViewController(animated: true)
+            //navigationController.popToRootViewController(animated: true)
+            navigationController.dismiss(animated: true)
         }
     }
 }

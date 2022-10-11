@@ -20,7 +20,7 @@ enum ActiveTextField {
 }
 
 protocol ExchangeViewProtocol: AnyObject {
-    func updateViews(buttonCondition: SelectedButtonCondition, activeTextField: ActiveTextField)
+    func updateViews(field: ActiveTextField)
     func failure(error: Error)
 }
 
@@ -29,12 +29,17 @@ protocol ExchangeViewPresenterProtocol: AnyObject {
          networkService: NetworkServiceProtocol,
          router: RouterProtocol?
     )
-    func exchangeCurrencies()
+    func exchangeCurrencies(fromValue: String, toValue: String)
+    func getValuesFromView(field: ActiveTextField, value: String)
+    func setValues(value: String, activeField: ActiveTextField)
     func tapOnButton()
-    var firstSelectedCurrency: String { get set }
-    var secondSelectedCurrency: String { get set }
-    var firstCurrencyValue: String { get set }
-    var secondCurrencyValue: String? { get set }
+    var firstSelectedCurrency: String? { get set }
+    var secondSelectedCurrency: String? { get set }
+    var valueForFirstField: String? { get set }
+    var valueForSecondField: String? { get set }
+    var amount: String? { get set }
+    var selectedButton: SelectedButtonCondition? { get set }
+    var activeField: ActiveTextField? { get set }
     var exchangeModel: ExchangeCurrenciesData? { get set }
 }
 
@@ -55,57 +60,72 @@ class ExchangePresenter: ExchangeViewPresenterProtocol {
     let networkService: NetworkServiceProtocol!
     var exchangeModel: ExchangeCurrenciesData?
     
-    var firstSelectedCurrency: String
-    var secondSelectedCurrency: String
-    var firstCurrencyValue: String
-    var secondCurrencyValue: String?
+    var firstSelectedCurrency: String?
+    var secondSelectedCurrency: String?
+    var valueForFirstField: String?
+    var valueForSecondField: String?
+    var amount: String?
     
-    var selectedButton: SelectedButtonCondition
-    var activeField: ActiveTextField
+    var selectedButton: SelectedButtonCondition?
+    var activeField: ActiveTextField?
     
     required init(view: ExchangeViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
         self.view = view
         self.networkService = networkService
         self.router = router
-         
-        self.firstSelectedCurrency = "USD"
-        self.secondSelectedCurrency = "RUB"
-        self.firstCurrencyValue = "100.0"
-        self.selectedButton = .fromButton
-        self.activeField = .firstTextField
-        exchangeCurrencies()
+        print("Exchange Presenter Has Been Initialized")
+    }
+     
+    func getValuesFromView(field: ActiveTextField, value: String) {
+        print("2")
+        guard let firstSelectedCurrency, let secondSelectedCurrency else { return }
+        amount = value
+        activeField = field
+        
+        switch field {
+        case .firstTextField:
+            exchangeCurrencies(fromValue: firstSelectedCurrency, toValue: secondSelectedCurrency)
+        case .secondTextField:
+            exchangeCurrencies(fromValue: secondSelectedCurrency, toValue: firstSelectedCurrency)
+        }
+    }
+    
+    func exchangeCurrencies(fromValue: String, toValue: String) {
+        print("3")
+        guard let amount else { return }
+        networkService.exchangeCurrencies(fromValue: fromValue,
+                                          toValue: toValue,
+                                          currentAmount: amount) { [weak self] result in
+            guard let self else { return }
+            DispatchQueue.main.async { //After(deadline: .now() + 0.3)
+                switch result {
+                case .success(let model):
+                    self.exchangeModel = model
+                    guard let rateForAmount = model?.rates?.first?.value.rateForAmount else { return }
+                    self.setValues(
+                        value: rateForAmount,
+                        activeField: self.activeField!
+                    )
+                case .failure(let error):
+                    self.view?.failure(error: error)
+                }
+            }
+        }
+    }
+    
+    func setValues(value: String, activeField: ActiveTextField) {
+        print("4")
+        switch activeField {
+        case .firstTextField:
+            valueForSecondField = value
+        case .secondTextField:
+            valueForFirstField = value
+        }
+        view?.updateViews(field: activeField)
     }
     
     func tapOnButton() {
         router?.showCurrenciesList()
-    }
-    
-    func exchangeCurrencies() {
-        networkService.exchangeCurrencies(
-            fromValue: firstSelectedCurrency,
-            toValue: secondSelectedCurrency,
-            currentAmount: firstCurrencyValue) { [weak self] result in
-                guard let self else { return }
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let rates):
-                        self.exchangeModel = rates
-                        self.view?.updateViews(buttonCondition: self.selectedButton, activeTextField: self.activeField)
-                    case .failure(let error):
-                        self.view?.failure(error: error)
-                    }
-                }
-        }
-        
-        //networkService.exchangeCurrencies(fromValue: firstSelectedCurrency, toValue: secondSelectedCurrency, currentAmount: firstCurrencyValue)
-        guard let rateForAmount = exchangeModel?.rates?.first?.value.rateForAmount else { return }
-        
-        switch activeField {
-        case .firstTextField:
-            self.secondCurrencyValue = rateForAmount
-        case .secondTextField:
-            self.firstCurrencyValue = rateForAmount
-        }
-    }
+    } 
 }
 

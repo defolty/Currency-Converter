@@ -7,9 +7,7 @@
 
 import UIKit
 
-protocol AssemblyBuilderProtocol {
-//    exchangeModel: ExchangeCurrenciesData?,
-//    activeTextField: ActiveTextField
+protocol AssemblyBuilderProtocol { 
     func createExchangeModule(router: RouterProtocol) -> UIViewController
 //    selectedButton: SelectedButtonCondition
     func createCurrenciesListModule(router: RouterProtocol) -> UIViewController

@@ -6,22 +6,33 @@
 //
  
 import UIKit
-
+  
+extension CurrenciesListView: CurrenciesListViewProtocol {
+    
+    func success() {
+        tableView.reloadData()
+    }
+    
+    func failure(error: Error) {
+        ///# add alert
+        print(error.localizedDescription)
+    }
+}
+ 
 class CurrenciesListView: UIViewController {
     
-    private let tableView = UITableView()
+    private let tableView = UITableView() 
     private var safeArea: UILayoutGuide!
     var presenter: CurrenciesListViewPresenterProtocol!
     
     override func loadView() {
         super.loadView()
          
-        safeArea = view.layoutMarginsGuide
-        setupTableView()
-        print("load view success")
+        setupTableView() 
     }
-     
+      
     private func setupTableView() {
+        safeArea = view.layoutMarginsGuide 
         view.addSubview(tableView)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
@@ -42,7 +53,8 @@ extension CurrenciesListView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        let currentCurrency = presenter.currenciesList?[indexPath.row] 
+        let currentCurrency = presenter.currenciesList?[indexPath.row]
+        cell.textLabel?.textAlignment = .center
         cell.textLabel?.text = currentCurrency
         
         return cell
@@ -55,18 +67,6 @@ extension CurrenciesListView: UITableViewDelegate {
     }
 }
 
-extension CurrenciesListView: CurrenciesListViewProtocol {
-    
-    func success() {
-        tableView.reloadData()
-    }
-    
-    func failure(error: Error) {
-        ///# add alert
-        print(error.localizedDescription)
-    } 
-}
- 
 //#if DEBUG
 //import SwiftUI
 //

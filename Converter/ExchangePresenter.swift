@@ -20,6 +20,7 @@ enum ActiveTextField {
 }
 
 protocol ExchangeViewProtocol: AnyObject {
+    func showIndicator(show: Bool)
     func updateViews(field: ActiveTextField)
     func failure(error: Error)
 }
@@ -31,8 +32,8 @@ protocol ExchangeViewPresenterProtocol: AnyObject {
     )
     func exchangeCurrencies(fromValue: String, toValue: String)
     func getValuesFromView(field: ActiveTextField, value: String)
-    func setValues(value: String, activeField: ActiveTextField)
-    func tapOnButton()
+    func setValues(rateForAmount: String, activeField: ActiveTextField) 
+    func tapOnButton() 
     var firstSelectedCurrency: String? { get set }
     var secondSelectedCurrency: String? { get set }
     var valueForFirstField: String? { get set }
@@ -73,13 +74,14 @@ class ExchangePresenter: ExchangeViewPresenterProtocol {
         self.view = view
         self.networkService = networkService
         self.router = router
-        print("Exchange Presenter Has Been Initialized")
     }
      
     func getValuesFromView(field: ActiveTextField, value: String) {
-        print("2")
         guard let firstSelectedCurrency, let secondSelectedCurrency else { return }
-        amount = value
+        let safeValue = value.replacingOccurrences(of: ",", with: ".")
+        let trueSafeValue = safeValue.trimmingCharacters(in: .whitespaces)
+          
+        amount = trueSafeValue
         activeField = field
         
         switch field {
@@ -91,19 +93,19 @@ class ExchangePresenter: ExchangeViewPresenterProtocol {
     }
     
     func exchangeCurrencies(fromValue: String, toValue: String) {
-        print("3")
-        guard let amount else { return }
+        guard let amount else { return } 
+        view?.showIndicator(show: true)
         networkService.exchangeCurrencies(fromValue: fromValue,
                                           toValue: toValue,
                                           currentAmount: amount) { [weak self] result in
             guard let self else { return }
-            DispatchQueue.main.async { //After(deadline: .now() + 0.3)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.275) { 
                 switch result {
                 case .success(let model):
                     self.exchangeModel = model
                     guard let rateForAmount = model?.rates?.first?.value.rateForAmount else { return }
                     self.setValues(
-                        value: rateForAmount,
+                        rateForAmount: rateForAmount,
                         activeField: self.activeField!
                     )
                 case .failure(let error):
@@ -113,19 +115,21 @@ class ExchangePresenter: ExchangeViewPresenterProtocol {
         }
     }
     
-    func setValues(value: String, activeField: ActiveTextField) {
-        print("4")
+    func setValues(rateForAmount: String, activeField: ActiveTextField) {
+        let rateForAmountAsDouble = Double(rateForAmount)
+        
         switch activeField {
         case .firstTextField:
-            valueForSecondField = value
+            valueForSecondField = rateForAmountAsDouble?.fractionDigits(min: 0, max: 2, roundingMode: .down)
         case .secondTextField:
-            valueForFirstField = value
+            valueForFirstField = rateForAmountAsDouble?.fractionDigits(min: 0, max: 2, roundingMode: .down)
         }
+        
+        view?.showIndicator(show: false)
         view?.updateViews(field: activeField)
     }
-    
+     
     func tapOnButton() {
         router?.showCurrenciesList()
-    } 
+    }
 }
-

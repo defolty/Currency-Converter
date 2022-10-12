@@ -70,33 +70,6 @@ class NetworkService: NetworkServiceProtocol {
                 completion(.failure(error))
             }
         }.resume()
-        
-        //sendExchangeRequest(request: request)
-        //sendExchangeRequest(request: reverseRequest)
     }
-    
-//    func sendExchangeRequest(request: NSMutableURLRequest) {
-//        URLSession.shared.dataTask(with: request as URLRequest) { data, _, error in
-//            guard let data else { return }
-//            do {
-//                let convertingRate = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
-//
-//                DispatchQueue.main.async {
-//                    print("sendExchangeRequest network service - ", convertingRate)
-//                }
-//            } catch let error {
-//                print("Error serialization", error)
-//            }
-//        }.resume()
-//    }
 }
-
-/*
- DispatchQueue.main.async {
- // let firstFieldNumber = convertingRate.rates?.first?.value.rateForAmount ?? "000"
- // let doubleFirstValue = Double(firstFieldNumber)
- // let roundDouble = floor(10000 * doubleFirstValue!) / 10000
- // let roundedFirstFieldNumber = String(roundDouble) //String(roundDouble)
- print(convertingRate)
- }
- */
+ 

@@ -9,16 +9,19 @@ import UIKit
 import SnapKit
 
 extension ExchangeScreenView: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-//        let field: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField
-//        presenter.getValuesFromView(activeField: field, value: textField.text ?? "ERR")
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        textField.validInput(
+            textField: textField,
+            range: range,
+            string: string,
+            numberOfCharacter: 8,
+            maxDecimalPlaces: 2)
     }
 }
 
 extension ExchangeScreenView: ExchangeViewProtocol {
     
     func updateViews(field: ActiveTextField) {
-        print("5")
         firstCurrencySelectionButton.setTitle(
             presenter.firstSelectedCurrency,
             for: .normal)
@@ -28,22 +31,32 @@ extension ExchangeScreenView: ExchangeViewProtocol {
           
         switch field {
         case .firstTextField:
-            print("updateViews case .firstTextField")
             secondCurrencyTextField.text = presenter.valueForSecondField
         case .secondTextField:
-            print("updateViews case .secondTextField")
             firstCurrencyTextField.text = presenter.valueForFirstField
         }
     }
     
+    func showIndicator(show: Bool) {
+        switch show {
+        case true:
+            activityIndicator.show()
+        case false:
+            activityIndicator.hide()
+        }
+    }
+     
     func failure(error: Error) {
-        print("error ExchangeScreenView func failure", error.localizedDescription)
+        self.showAlert(withTitle: "Error", withMessage: error.localizedDescription)
     }
 }
  
 class ExchangeScreenView: UIViewController {
      
     var presenter: ExchangeViewPresenterProtocol!
+    let activityIndicator = ActivityIndicator()
+    private var scrollOffset : CGFloat = 0
+    private var distance : CGFloat = 0
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -61,53 +74,55 @@ class ExchangeScreenView: UIViewController {
         let config = UIImage.SymbolConfiguration(
             pointSize: 100,
             weight: .regular,
-            scale: .default
-        )
+            scale: .default)
         let image = UIImage(
-            systemName: "arrow.up.arrow.down.square",
-            withConfiguration: config
-        )
+            systemName: "chevron.up.chevron.down",
+            withConfiguration: config)
         swapButton.setImage(image, for: .normal)
         swapButton.tintColor = .systemIndigo
         swapButton.addTarget(
             self,
             action: #selector(selectCurrency),
-            for: .touchUpInside
-        )
+            for: .touchUpInside)
         self.view.addSubview(swapButton)
         return swapButton
     }()
     
     private lazy var firstCurrencyTextField: UITextField = {
         let textfield = UITextField()
-        textfield.placeholder = "0.0"
+        textfield.placeholder = "You can type here..."
+        textfield.text = "100"
+        textfield.adjustsFontSizeToFitWidth = true 
         textfield.textAlignment = .center
         textfield.textColor = .white
         textfield.backgroundColor = .systemPink
         textfield.keyboardType = .decimalPad
         textfield.layer.cornerRadius = 12
         textfield.isUserInteractionEnabled = true
-        textfield.clearButtonMode = .whileEditing
+        textfield.clearButtonMode = .always
         textfield.clearsOnBeginEditing = true
+        textfield.smartDashesType = .no
         textfield.delegate = self
-        textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
+        textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingDidEnd)
         self.view.addSubview(textfield)
         return textfield
     }()
     
     private lazy var secondCurrencyTextField: UITextField = {
         let textfield = UITextField()
-        textfield.placeholder = "0.0"
+        textfield.placeholder = "or here..."
+        textfield.adjustsFontSizeToFitWidth = true
         textfield.textAlignment = .center
         textfield.textColor = .white
         textfield.backgroundColor = .systemPink
         textfield.keyboardType = .decimalPad
         textfield.layer.cornerRadius = 12
         textfield.isUserInteractionEnabled = true
-        textfield.clearButtonMode = .whileEditing
+        textfield.clearButtonMode = .always
         textfield.clearsOnBeginEditing = true
+        textfield.smartDashesType = .no
         textfield.delegate = self
-        textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
+        textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingDidEnd)
         self.view.addSubview(textfield)
         return textfield
     }()
@@ -115,7 +130,7 @@ class ExchangeScreenView: UIViewController {
     private lazy var firstCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
         button.tag = 1
-        button.setTitle("First", for: .normal)
+        button.setTitle("EUR", for: .normal)
         button.backgroundColor = .systemIndigo
         button.tintColor = .white
         button.layer.cornerRadius = 12
@@ -129,7 +144,7 @@ class ExchangeScreenView: UIViewController {
     private lazy var secondCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
         button.tag = 2
-        button.setTitle("Second", for: .normal)
+        button.setTitle("RUB", for: .normal)
         button.backgroundColor = .systemIndigo
         button.tintColor = .white
         button.layer.cornerRadius = 12
@@ -143,33 +158,40 @@ class ExchangeScreenView: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .systemBackground
         addSubviews()
         setupNavigationBar()
         setupConstaints()
+        registerForKeyboardNotifications()
+        hideKeyboardWhenTappedAround()
         initialValues()
     }
+     
+    // MARK: - Action's
     
     @objc private func selectCurrency(sender: UIButton) {
 //        let selectedButton: SelectedButtonCondition = sender.tag == 1 ? .fromButton : .toButton
         if let presenter {
             presenter.tapOnButton()
-        } else {
-            print("error router presenter.tapOnButton()")
-        }
+        } 
     }
     
     @objc private func textFieldsDidEditing(textField: UITextField) {
-        print("6")
         guard let text = textField.text else { return }
-        let activeField: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField
-        
+        let activeField: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField 
         presenter.getValuesFromView(field: activeField, value: text)
+    }
+    
+    @objc private func settingsNavigationBarTapped() {
+        print("settingsNavigationBarTapped")
     }
      
     // MARK: - Setup Views
     
     private func addSubviews() {
         view.addSubview(scrollView)
+        view.addSubview(activityIndicator)
+        activityIndicator.hide()
         scrollView.addSubview(contentView) 
     }
     
@@ -183,10 +205,16 @@ class ExchangeScreenView: UIViewController {
         )
     }
     
-    @objc private func settingsNavigationBarTapped() {
-        print("settingsNavigationBarTapped")
+    private func initialValues() {
+        presenter.firstSelectedCurrency = "EUR"
+        presenter.secondSelectedCurrency = "RUB"
+        presenter.amount = "100"
+        presenter.selectedButton = .fromButton
+        presenter.getValuesFromView(field: .firstTextField, value: "100")
     }
-     
+    
+    // MARK: - Setup Constraint's
+    
     private func setupConstaints() {
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -199,20 +227,20 @@ class ExchangeScreenView: UIViewController {
         firstCurrencySelectionButton.snp.makeConstraints { make in
             make.width.equalTo(80)
             make.height.equalTo(80)
-            make.leading.equalTo(view).offset(30)
+            make.leading.equalTo(view).offset(50)
             make.bottom.equalTo(swapValue.snp.top).offset(-5)
         }
 
         firstCurrencyTextField.snp.makeConstraints { make in
             make.left.equalTo(firstCurrencySelectionButton.snp.right).offset(10)
-            make.trailing.equalTo(view).offset(-30)
+            make.trailing.equalTo(view).offset(-50)
             make.height.equalTo(firstCurrencySelectionButton)
             make.centerY.equalTo(firstCurrencySelectionButton)
         }
         
         swapValue.snp.makeConstraints { make in
-            make.width.equalTo(50)
-            make.height.equalTo(50)
+            make.width.equalTo(40)
+            make.height.equalTo(40)
             make.centerX.equalTo(firstCurrencySelectionButton)
             make.centerY.equalTo(view)
         }
@@ -231,15 +259,92 @@ class ExchangeScreenView: UIViewController {
             make.width.equalTo(firstCurrencyTextField)
         }
     }
+}
+
+    // MARK: - Keyboard Observer
+
+extension ExchangeScreenView {
     
-    private func initialValues() {
-        print("1")
-        presenter.firstSelectedCurrency = "EUR"
-        presenter.secondSelectedCurrency = "USD"
-        presenter.amount = "100"
-        presenter.selectedButton = .fromButton
-        firstCurrencyTextField.text = presenter.amount
-        presenter.getValuesFromView(field: .firstTextField, value: "100")
+    private func registerForKeyboardNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    private func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            var safeArea = self.view.frame
+            safeArea.size.height += scrollView.contentOffset.y
+            safeArea.size.height -= keyboardSize.height + (UIScreen.main.bounds.height*0.04)
+            let activeField: UIView? = [
+                firstCurrencyTextField,
+                secondCurrencyTextField
+            ].first { $0.isFirstResponder }
+            if let activeField = activeField {
+                if safeArea.contains(CGPoint(
+                    x: 0,
+                    y: activeField.frame.maxY
+                )) {
+                    return
+                } else {
+                    distance = activeField.frame.maxY - safeArea.size.height
+                    scrollOffset = scrollView.contentOffset.y
+                    self.scrollView.setContentOffset(
+                        CGPoint(x: 0,y: scrollOffset + distance),
+                        animated: true
+                    )
+                }
+            }
+            scrollView.isScrollEnabled = false
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        if distance == 0 {
+            return
+        }
+        self.scrollView.setContentOffset(
+            CGPoint(x: 0, y: -scrollOffset - distance),
+            animated: true
+        )
+        scrollOffset = 0
+        distance = 0
+        scrollView.isScrollEnabled = true
+    }
+    
+    private func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(dismissKeyboard)
+        )
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 

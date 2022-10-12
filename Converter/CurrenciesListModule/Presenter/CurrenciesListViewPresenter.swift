@@ -6,17 +6,12 @@
 //
 
 import Foundation
-
-// что должен уметь делать presenter для list view:
-// - получать список валют - ок
-// - получать выбранную кнопку
-// - отправлять выбранную валюту в exchange view
  
 protocol CurrenciesListViewProtocol: AnyObject {
     func success()
     func failure(error: Error)
 }
-  
+   
 protocol CurrenciesListViewPresenterProtocol: AnyObject {
     init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?)
     func getCurrenciesList()

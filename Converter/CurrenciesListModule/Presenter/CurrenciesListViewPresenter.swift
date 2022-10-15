@@ -6,50 +6,57 @@
 //
 
 import Foundation
- 
+
 protocol CurrenciesListViewProtocol: AnyObject {
-    func success()
-    func failure(error: Error)
+  func success()
+  func failure(error: Error)
 }
-   
+
 protocol CurrenciesListViewPresenterProtocol: AnyObject {
-    init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?)
-    func getCurrenciesList()
-    func popToRoot()
-    var currenciesList: [String]? { get set } 
+  init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?)
+  func getCurrenciesList()
+  func setAction()
+  func popToRoot() 
+  var currenciesList: [String]? { get set }
 }
- 
-class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
-    
-    weak var view: CurrenciesListViewProtocol?
-    let networkService: NetworkServiceProtocol!
-    var router: RouterProtocol?
-    var currenciesList: [String]?
-     
-    required init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
-        self.view = view
-        self.networkService = networkService
-        self.router = router
-        getCurrenciesList()
+
+final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
+  weak var view: CurrenciesListViewProtocol?
+  let networkService: NetworkServiceProtocol!
+  var router: RouterProtocol?
+  var currenciesListView: CurrenciesListView?
+  var currenciesList: [String]?
+  
+  required init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
+    self.view = view
+    self.networkService = networkService
+    self.router = router
+    getCurrenciesList()
+  }
+  
+  func setAction() {
+    currenciesListView?.onButtonAction = { [unowned self] text in
+      router?.changeExchangeElements(with: text)
     }
-    
-    func popToRoot() {
-        router?.popToRoot()
-    }
-    
-    func getCurrenciesList() {
-        networkService.getCurrenciesList { [weak self] result in
-            guard let self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let list):
-                    self.currenciesList = list?.currencies.map{ $0.key }.sorted()
-                    self.view?.success() 
-                case .failure(let error):
-                    self.view?.failure(error: error)
-                }
-            }
+  }
+  
+  func getCurrenciesList() {
+    networkService.getCurrenciesList { [weak self] result in
+      guard let self else { return }
+      DispatchQueue.main.async {
+        switch result {
+        case .success(let list):
+          self.currenciesList = list?.currencies.map{ $0.key }.sorted()
+          self.view?.success()
+        case .failure(let error):
+          self.view?.failure(error: error)
         }
+      }
     }
+  }
+  
+  func popToRoot() {
+    router?.popToRoot()
+  }
 } 
- 
+

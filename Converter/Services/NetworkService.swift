@@ -8,68 +8,66 @@
 import Foundation
 
 protocol NetworkServiceProtocol {
-    typealias exchangeCompletion = (Result<ExchangeCurrenciesData?, Error>) -> Void
-    func getCurrenciesList(completion: @escaping (Result<CurrenciesListData?, Error>) -> Void)
-    func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion)
+  typealias exchangeCompletion = (Result<ExchangeCurrenciesData?, Error>) -> Void
+  func getCurrenciesList(completion: @escaping (Result<CurrenciesListData?, Error>) -> Void)
+  func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion)
 }
 
 class NetworkService: NetworkServiceProtocol {
-    
-    typealias exchangeComplition = (Result<ExchangeCurrenciesData?, Error>) -> Void
-    
-    func getCurrenciesList(completion: @escaping (Result<CurrenciesListData?, Error>) -> Void) {
-        let request = NSMutableURLRequest(
-            url: NSURL(string: Constants.currenciesListUrl)! as URL,
-            cachePolicy: .useProtocolCachePolicy,
-            timeoutInterval: 5.0
-        )
-        request.httpMethod = "GET"
-        request.allHTTPHeaderFields = Constants.headers
-        URLSession.shared.dataTask(with: request as URLRequest) { (data, _, error) in
-            guard let data else { return }
-            if let error {
-                completion(.failure(error))
-            }
-            do {
-                let currenciesData = try JSONDecoder().decode(CurrenciesListData.self, from: data)
-                completion(.success(currenciesData))
-            } catch {
-                completion(.failure(error))
-            }
-        }.resume()
-    }
-    
-    func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion) {
-        let url = "\(Constants.firstPartUrl)\(fromValue)&to=\(toValue)&amount=\(amount)&apiKey=\(Constants.apiKey)&format=json"
-        let request = NSMutableURLRequest(
-            url: NSURL(string: url)! as URL,
-            cachePolicy: .useProtocolCachePolicy,
-            timeoutInterval: 5.0
-        )
-        let reverse = "\(Constants.firstPartUrl)\(toValue)&to=\(fromValue)&amount=\(amount)&apiKey=\(Constants.apiKey)&format=json"
-        let reverseRequest = NSMutableURLRequest(
-            url: NSURL(string: reverse)! as URL,
-            cachePolicy: .useProtocolCachePolicy,
-            timeoutInterval: 5.0
-        )
-        request.httpMethod = "GET"
-        request.allHTTPHeaderFields = Constants.headers
-        reverseRequest.httpMethod = "GET"
-        reverseRequest.allHTTPHeaderFields = Constants.headers
-        
-        URLSession.shared.dataTask(with: request as URLRequest) { (data, _, error) in
-            guard let data else { return }
-            do {
-                let convertingRate = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
-                DispatchQueue.main.async {
-                    print("sendExchangeRequest network service - ", convertingRate)
-                    completion(.success(convertingRate))
-                }
-            } catch let error {
-                print("Error serialization", error)
-                completion(.failure(error))
-            }
-        }.resume()
-    }
-}
+  
+  typealias exchangeComplition = (Result<ExchangeCurrenciesData?, Error>) -> Void
+  
+  func getCurrenciesList(completion: @escaping (Result<CurrenciesListData?, Error>) -> Void) {
+    let request = NSMutableURLRequest(
+      url: NSURL(string: Constants.currenciesListUrl)! as URL,
+      cachePolicy: .useProtocolCachePolicy,
+      timeoutInterval: 5.0
+    )
+    request.httpMethod = "GET"
+    request.allHTTPHeaderFields = Constants.headers
+    URLSession.shared.dataTask(with: request as URLRequest) { (data, _, error) in
+      guard let data else { return }
+      if let error {
+        completion(.failure(error))
+      }
+      do {
+        let currenciesData = try JSONDecoder().decode(CurrenciesListData.self, from: data)
+        completion(.success(currenciesData))
+      } catch {
+        completion(.failure(error))
+      }
+    }.resume()
+  }
+  
+  func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion) {
+    let url = "\(Constants.firstPartUrl)\(fromValue)&to=\(toValue)&amount=\(amount)&apiKey=\(Constants.apiKey)&format=json"
+    let request = NSMutableURLRequest(
+      url: NSURL(string: url)! as URL,
+      cachePolicy: .useProtocolCachePolicy,
+      timeoutInterval: 5.0
+    )
+    request.httpMethod = "GET"
+    request.allHTTPHeaderFields = Constants.headers
  
+    URLSession.shared.dataTask(with: request as URLRequest) { (data, _, error) in
+      guard let data else { return }
+      do {
+        let convertingRate = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
+        DispatchQueue.main.async {
+          completion(.success(convertingRate))
+        }
+      } catch let error { 
+        completion(.failure(error))
+      }
+    }.resume()
+  }
+}
+
+//    let reverse = "\(Constants.firstPartUrl)\(toValue)&to=\(fromValue)&amount=\(amount)&apiKey=\(Constants.apiKey)&format=json"
+//    let reverseRequest = NSMutableURLRequest(
+//      url: NSURL(string: reverse)! as URL,
+//      cachePolicy: .useProtocolCachePolicy,
+//      timeoutInterval: 5.0
+//    )
+//    reverseRequest.httpMethod = "GET"
+//    reverseRequest.allHTTPHeaderFields = Constants.headers

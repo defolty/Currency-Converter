@@ -29,7 +29,7 @@ protocol ExchangeViewPresenterProtocol: AnyObject {
   func exchangeCurrencies(fromValue: String, toValue: String)
   func getValuesFromView(field: ActiveTextField, value: String)
   func setValues(rateForAmount: String, activeField: ActiveTextField)
-  func showNumbersToUser(numbers: Double) -> String
+  func showNumbersToUser(numbers: String) -> String
   func updateSelectedCurrency(currency: String)
   func tapOnButton()
   
@@ -49,8 +49,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   let router: RouterProtocol?
   let networkService: NetworkServiceProtocol!
   var exchangeModel: ExchangeCurrenciesData?
-  
-  var exchangeView: ExchangeScreenView?
+   
   var selectedButton: SelectedButtonCondition?
   var activeField: ActiveTextField?
   
@@ -67,16 +66,18 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   }
    
   func updateSelectedCurrency(currency: String) {
-    print("updateSelectedCurrency")
-    guard let activeField else { return }
-    switch activeField {
-    case .firstTextField:
+    guard let selectedButton, let amount, let activeField else {
+      return
+    }
+     
+    switch selectedButton {
+    case .fromButton:
       fromCurrency = currency
-    case .secondTextField:
+    case .toButton:
       toCurrency = currency
     }
-    
-    view?.updateViews(field: activeField)
+     
+    getValuesFromView(field: activeField, value: amount)
   }
   
   func getValuesFromView(field: ActiveTextField, value: String) {
@@ -130,21 +131,21 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     view?.updateViews(field: activeField)
   }
   
-  func showNumbersToUser(numbers: Double) -> String {
+  func showNumbersToUser(numbers: String) -> String {
     let currencyFormatter = NumberFormatter()
     currencyFormatter.usesGroupingSeparator = true
     currencyFormatter.numberStyle = .currency
     currencyFormatter.currencySymbol = ""
     // currencyFormatter.locale = Locale.current
-    let currencyString = currencyFormatter.string(from: NSNumber(value: numbers))
+    
+    let numbersToDouble = Double(numbers)
+    guard let numbersToDouble else { return "n/a" }
+    let currencyString = currencyFormatter.string(from: NSNumber(value: numbersToDouble))
     guard let currencyString else { return "n/a" }
     return currencyString
   }
   
   func tapOnButton() {
-    guard let exchangeView else { return }
-    exchangeView.onButtonAction = { [unowned self] in
       router?.showCurrenciesList()
-    }
   }
 }

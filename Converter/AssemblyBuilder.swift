@@ -8,13 +8,13 @@
 import UIKit
 
 protocol AssemblyBuilderProtocol { 
-  func createExchangeModule(router: RouterProtocol) -> UIViewController
-  func createCurrenciesListModule(router: RouterProtocol) -> UIViewController
+  func createExchangeModule(router: RouterProtocol) -> ExchangeScreenView
+  func createCurrenciesListModule(router: RouterProtocol) -> CurrenciesListView
 }
 
-class AssemblyModuleBuilder: AssemblyBuilderProtocol {
+final class AssemblyModuleBuilder: AssemblyBuilderProtocol {
   
-  func createExchangeModule(router: RouterProtocol) -> UIViewController {
+  func createExchangeModule(router: RouterProtocol) -> ExchangeScreenView {
     let view = ExchangeScreenView()
     let networkService = NetworkService()
     let presenter = ExchangePresenter(
@@ -26,7 +26,7 @@ class AssemblyModuleBuilder: AssemblyBuilderProtocol {
     return view
   }
   
-  func createCurrenciesListModule(router: RouterProtocol) -> UIViewController {
+  func createCurrenciesListModule(router: RouterProtocol) -> CurrenciesListView {
     let view = CurrenciesListView()
     let networkService = NetworkService()
     let presenter = CurrenciesListPresenter(

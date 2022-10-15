@@ -45,14 +45,24 @@ extension ExchangeScreenView: ExchangeViewProtocol {
   }
 }
 
+protocol SendSelectedCurrency: AnyObject {
+  func sendSelectedCurrency(currency: String)
+}
+
+extension ExchangeScreenView: SendSelectedCurrency {
+  func sendSelectedCurrency(currency: String) {
+    tempCurrency = currency
+  }
+}
+
 final class ExchangeScreenView: UIViewController {
   
   let activityIndicator = ActivityIndicator()
   var presenter: ExchangeViewPresenterProtocol!
-  var onButtonAction: (() -> Void)?
   private var scrollOffset : CGFloat = 0
   private var distance : CGFloat = 0
-  
+  var tempCurrency: String?
+   
   private let scrollView: UIScrollView = {
     let scrollView = UIScrollView()
     return scrollView
@@ -77,7 +87,7 @@ final class ExchangeScreenView: UIViewController {
     swapButton.tintColor = .systemIndigo
     swapButton.addTarget(
       self,
-      action: #selector(selectCurrency),
+      action: #selector(swapCurrencies),
       for: .touchUpInside)
     self.view.addSubview(swapButton)
     return swapButton
@@ -159,18 +169,34 @@ final class ExchangeScreenView: UIViewController {
     setupConstaints()
     registerForKeyboardNotifications()
     hideKeyboardWhenTappedAround()
-    initialValues()
-    presenter.tapOnButton()
+    initialValues() 
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    
+    if let tempCurrency {
+      presenter.updateSelectedCurrency(currency: tempCurrency)
+    }
   }
   
   // MARK: - Action's
   
   @objc
   private func selectCurrency(sender: UIButton) {
-    //let selectedButton: SelectedButtonCondition = sender.tag == 1 ? .fromButton : .toButton
-    guard let presenter else { return }
-    onButtonAction?()
+    let selectedButton: SelectedButtonCondition = sender.tag == 1 ? .fromButton : .toButton
+    switch selectedButton {
+    case .fromButton:
+      presenter.selectedButton = .fromButton
+    case .toButton:
+      presenter.selectedButton = .toButton
+    }
     presenter.tapOnButton()
+  }
+  
+  @objc
+  private func swapCurrencies(sender: UIButton) {
+    print("swap button")
   }
   
   @objc
@@ -178,12 +204,8 @@ final class ExchangeScreenView: UIViewController {
     guard let text = textField.text else { return }
     let activeField: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField
     
-    presenter.getValuesFromView(field: activeField, value: text)
-    
-    let textToDouble = Double(text)
-    guard let textToDouble else { return } 
-    
-    textField.text = presenter.showNumbersToUser(numbers: textToDouble)
+    presenter.getValuesFromView(field: activeField, value: text) 
+    textField.text = presenter.showNumbersToUser(numbers: text)
   }
   
   @objc
@@ -214,6 +236,8 @@ final class ExchangeScreenView: UIViewController {
     presenter.fromCurrency = "EUR"
     presenter.toCurrency = "RUB"
     presenter.amount = "100"
+    presenter.valueForFirstField = "100"
+    presenter.activeField = .firstTextField
     presenter.selectedButton = .fromButton
     presenter.getValuesFromView(field: .firstTextField, value: "100")
   }

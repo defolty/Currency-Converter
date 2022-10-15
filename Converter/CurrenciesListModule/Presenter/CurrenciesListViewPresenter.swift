@@ -15,7 +15,6 @@ protocol CurrenciesListViewProtocol: AnyObject {
 protocol CurrenciesListViewPresenterProtocol: AnyObject {
   init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?)
   func getCurrenciesList()
-  func setAction()
   func popToRoot() 
   var currenciesList: [String]? { get set }
 }
@@ -23,8 +22,7 @@ protocol CurrenciesListViewPresenterProtocol: AnyObject {
 final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
   weak var view: CurrenciesListViewProtocol?
   let networkService: NetworkServiceProtocol!
-  var router: RouterProtocol?
-  var currenciesListView: CurrenciesListView?
+  var router: RouterProtocol? 
   var currenciesList: [String]?
   
   required init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
@@ -33,13 +31,7 @@ final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
     self.router = router
     getCurrenciesList()
   }
-  
-  func setAction() {
-    currenciesListView?.onButtonAction = { [unowned self] text in
-      router?.changeExchangeElements(with: text)
-    }
-  }
-  
+   
   func getCurrenciesList() {
     networkService.getCurrenciesList { [weak self] result in
       guard let self else { return }

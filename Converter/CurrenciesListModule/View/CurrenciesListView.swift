@@ -21,15 +21,14 @@ final class CurrenciesListView: UIViewController {
   
   private var tableView = UITableView()
   private var safeArea: UILayoutGuide!
-  var onButtonAction: ((String) -> Void)?
+  weak var sendCurrencyDelegate: SendSelectedCurrency?
   var presenter: CurrenciesListViewPresenterProtocol!
   
   override func loadView() {
     super.loadView()
     
     setupTableView()
-    setupNavigationBar()
-    presenter.setAction()
+    setupNavigationBar() 
   }
   
   private func setupTableView() {
@@ -54,6 +53,7 @@ final class CurrenciesListView: UIViewController {
   
   @objc func handleDone() {
     print("handleDone")
+    presenter.popToRoot()
     //presenter.popToRoot()
   }
   
@@ -82,9 +82,8 @@ extension CurrenciesListView: UITableViewDelegate {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let currentCurrency = presenter.currenciesList?[indexPath.row]
     guard let currentCurrency else { return }
-    onButtonAction?(currentCurrency)
-    presenter.popToRoot()
-    print(currentCurrency)
+    sendCurrencyDelegate?.sendSelectedCurrency(currency: currentCurrency)
+    //presenter.popToRoot()
   }
 }
 

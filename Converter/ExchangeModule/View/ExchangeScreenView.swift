@@ -62,7 +62,7 @@ final class ExchangeScreenView: UIViewController {
   private var scrollOffset : CGFloat = 0
   private var distance : CGFloat = 0
   private var tempCurrency: String?
-   
+  
   private let scrollView: UIScrollView = {
     let scrollView = UIScrollView()
     return scrollView
@@ -169,7 +169,7 @@ final class ExchangeScreenView: UIViewController {
     setupConstaints()
     registerForKeyboardNotifications()
     hideKeyboardWhenTappedAround()
-    initialValues() 
+    initialValues()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -204,7 +204,7 @@ final class ExchangeScreenView: UIViewController {
     guard let text = textField.text else { return }
     let activeField: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField
     presenter.activeField = activeField
-    presenter.getValuesFromView(value: text) //field: activeField,
+    presenter.getValuesFromView(value: text)
     textField.text = presenter.showNumbersToUser(numbers: text)
   }
   
@@ -224,13 +224,13 @@ final class ExchangeScreenView: UIViewController {
   
   private func setupNavigationBar() {
     navigationItem.backButtonTitle = ""
-    title = "Currency Converter" 
-    navigationItem.leftBarButtonItem = UIBarButtonItem(
-      image: UIImage(systemName: "gear"),
-      style: .plain,
-      target: self,
-      action: #selector(settingsNavigationBarTapped)
-    )
+    title = "Currency Converter"
+    //    navigationItem.leftBarButtonItem = UIBarButtonItem(
+    //      image: UIImage(systemName: "gear"),
+    //      style: .plain,
+    //      target: self,
+    //      action: #selector(settingsNavigationBarTapped)
+    //    )
   }
   
   private func initialValues() {
@@ -240,7 +240,7 @@ final class ExchangeScreenView: UIViewController {
     presenter.valueForFirstField = "100"
     presenter.activeField = .firstTextField
     presenter.selectedButton = .fromButton
-    presenter.getValuesFromView(value: "100") //field: .firstTextField, 
+    presenter.getValuesFromView(value: "100")
   }
   
   // MARK: - Setup Constraint's
@@ -386,4 +386,3 @@ extension ExchangeScreenView {
 //    )
 //}
 //#endif
-

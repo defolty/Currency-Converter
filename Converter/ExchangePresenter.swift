@@ -38,9 +38,9 @@ protocol ExchangeViewPresenterProtocol: AnyObject {
   
   func updateSelectedCurrency(currency: String)
   func swapButtons()
-  func getValuesFromView(value: String) //field: ActiveTextField,
+  func getValuesFromView(value: String)
   func exchangeCurrencies(fromValue: String, toValue: String)
-  func setValues(rateForAmount: String) //, activeField: ActiveTextField
+  func setValues(rateForAmount: String)
   func showNumbersToUser(numbers: String) -> String
   func tapOnButton()
 }
@@ -77,9 +77,8 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
       toCurrency = currency
       activeField = .secondTextField
     }
-    
-    //guard let activeField else { return }
-    getValuesFromView(value: amount) //field: activeField,
+     
+    getValuesFromView(value: amount)
   }
   
   func swapButtons() {
@@ -96,7 +95,6 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     let safeValue = value.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)
     
     amount = safeValue
-    //activeField = field
     
     switch activeField {
     case .firstTextField:
@@ -112,14 +110,14 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     networkService.exchangeCurrencies(fromValue: fromValue, toValue: toValue, currentAmount: amount) { [weak self] result in
       guard let self else { return }
       
-      DispatchQueue.main.async { /// After(deadline: .now() + 0.275)
+      DispatchQueue.main.async { /// After(deadline: .now() + 0.375)
         switch result {
         case .success(let model):
           self.exchangeModel = model
           guard let rateForAmount = model?.rates?.first?.value.rateForAmount else { return }
           self.setValues(
             rateForAmount: rateForAmount
-          ) //activeField: self.activeField!
+          )
         case .failure(let error):
           self.view?.failure(error: error)
         }
@@ -127,7 +125,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     }
   }
   
-  func setValues(rateForAmount: String) { //, activeField: ActiveTextField
+  func setValues(rateForAmount: String) {  
     let rateForAmountAsDouble = Double(rateForAmount)
     guard let activeField else { return }
     switch activeField {

@@ -28,7 +28,41 @@ extension CurrenciesListView: UISearchResultsUpdating {
     tableView.reloadData()
   }
 }
- 
+  
+extension CurrenciesListView: UITableViewDataSource {
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return presenter.numberOfRows()
+  }
+  
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+    cell.textLabel?.textAlignment = .center
+     
+    if isFiltering {
+      cell.textLabel?.text = presenter.filteredList?[indexPath.row]
+    } else {
+      cell.textLabel?.text = presenter.currenciesList?[indexPath.row]
+    }
+     
+    return cell
+  }
+}
+
+extension CurrenciesListView: UITableViewDelegate {
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    
+    let currentCurrency: String
+    if isFiltering {
+      currentCurrency = presenter.filteredList?[indexPath.row] ?? "n/a"
+    } else {
+      currentCurrency = presenter.currenciesList?[indexPath.row] ?? "n/a"
+    }
+    
+    sendCurrencyDelegate?.sendSelectedCurrency(currency: currentCurrency)
+    presenter.popToRoot()
+  }
+}
+  
 final class CurrenciesListView: UIViewController {
   
   private var tableView = UITableView()
@@ -83,38 +117,3 @@ final class CurrenciesListView: UIViewController {
     definesPresentationContext = true
   }
 }
-
-extension CurrenciesListView: UITableViewDataSource {
-  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return presenter.numberOfRows()
-  }
-  
-  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-    cell.textLabel?.textAlignment = .center
-     
-    if isFiltering {
-      cell.textLabel?.text = presenter.filteredList?[indexPath.row]
-    } else {
-      cell.textLabel?.text = presenter.currenciesList?[indexPath.row]
-    }
-     
-    return cell
-  }
-}
-
-extension CurrenciesListView: UITableViewDelegate { 
-  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    
-    let currentCurrency: String
-    if isFiltering {
-      currentCurrency = presenter.filteredList?[indexPath.row] ?? "n/a"
-    } else {
-      currentCurrency = presenter.currenciesList?[indexPath.row] ?? "n/a"
-    }
-    
-    sendCurrencyDelegate?.sendSelectedCurrency(currency: currentCurrency)
-    presenter.popToRoot()
-  }
-}
- 

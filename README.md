@@ -1,4 +1,4 @@
-# !!! Needs to be refactored !!! Maybe soon))
+# !!! Archived !!! Look another branch !!!
 
 ### Simple currency converter with online real-time conversion iOS 10+
 - rapidapi.com

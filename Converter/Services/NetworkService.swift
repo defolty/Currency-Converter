@@ -62,12 +62,4 @@ class NetworkService: NetworkServiceProtocol {
     }.resume()
   }
 }
-
-//    let reverse = "\(Constants.firstPartUrl)\(toValue)&to=\(fromValue)&amount=\(amount)&apiKey=\(Constants.apiKey)&format=json"
-//    let reverseRequest = NSMutableURLRequest(
-//      url: NSURL(string: reverse)! as URL,
-//      cachePolicy: .useProtocolCachePolicy,
-//      timeoutInterval: 5.0
-//    )
-//    reverseRequest.httpMethod = "GET"
-//    reverseRequest.allHTTPHeaderFields = Constants.headers
+ 

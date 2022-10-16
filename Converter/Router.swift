@@ -15,7 +15,6 @@ protocol RouterMain {
 protocol RouterProtocol: RouterMain {
   func initialViewController()
   func showCurrenciesList()
-//  func changeExchangeElements(with text: String)
   func popToRoot()
 }
 
@@ -42,31 +41,19 @@ class Router: RouterProtocol {
   func showCurrenciesList() { 
     if let navigationController {
       guard let currenciesVC = assemblyBuilder?.createCurrenciesListModule(router: self) else { return }
-//      let targetVC = UINavigationController(rootViewController: currenciesVC)
-//      navigationController.present(targetVC, animated: true)
+      //let targetVC = UINavigationController(rootViewController: currenciesVC)
+      //navigationController.present(targetVC, animated: true)
       currenciesListView = currenciesVC
       guard let currenciesListView else { return }
       currenciesListView.sendCurrencyDelegate = exchangeScreenView
       navigationController.pushViewController(currenciesVC, animated: true)
     }
   }
-  
-//  func changeExchangeElements(with text: String) {
-//    print("changeExchangeElements")
-//    guard let exchangeScreen else { return }
-//    guard let field = exchangeScreen.presenter.activeField else { return }
-//    switch field {
-//    case .firstTextField:
-//      exchangeScreen.presenter.fromCurrency = text
-//    case .secondTextField:
-//      exchangeScreen.presenter.toCurrency = text
-//    }
-//  }
-  
+   
   func popToRoot() {
     if let navigationController {
       navigationController.popToRootViewController(animated: true)
-//      navigationController.dismiss(animated: true)
+      //navigationController.dismiss(animated: true)
     }
   }
 } 

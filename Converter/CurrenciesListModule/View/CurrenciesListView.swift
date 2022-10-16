@@ -11,26 +11,50 @@ extension CurrenciesListView: CurrenciesListViewProtocol {
   func success() {
     tableView.reloadData()
   }
-  
+   
   func failure(error: Error) {
     self.showAlert(withTitle: "Error", withMessage: error.localizedDescription)
   }
 }
 
+extension CurrenciesListView: UISearchResultsUpdating {
+  func updateSearchResults(for searchController: UISearchController) {
+    let searchBar = searchController.searchBar
+    filterContentForSearchText(searchBar.text ?? "")
+  }
+  
+  private func filterContentForSearchText(_ searchText: String) {
+    presenter.filterList(text: searchText, state: isFiltering) 
+    tableView.reloadData()
+  }
+}
+ 
 final class CurrenciesListView: UIViewController {
   
   private var tableView = UITableView()
   private var safeArea: UILayoutGuide!
+  private let searchController = UISearchController(searchResultsController: nil)
+  
   weak var sendCurrencyDelegate: SendSelectedCurrency?
   var presenter: CurrenciesListViewPresenterProtocol!
   
+  var isFiltering: Bool {
+    return searchController.isActive && !isSearchBarEmpty
+  }
+  
+  var isSearchBarEmpty: Bool {
+    return searchController.searchBar.text?.isEmpty ?? true
+  }
+   
   override func loadView() {
     super.loadView()
     
+    view.backgroundColor = .systemBackground
     setupTableView()
-    setupNavigationBar() 
+    setupNavigationBar()
+    setupSearchController()
   }
-  
+    
   private func setupTableView() {
     safeArea = view.layoutMarginsGuide
     view.addSubview(tableView)
@@ -43,56 +67,54 @@ final class CurrenciesListView: UIViewController {
     tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
   }
-  
+   
   private func setupNavigationBar() {
-    self.isModalInPresentation = true
+    title = "Select Currency To Exchange"
     self.navigationController?.view.backgroundColor = .systemBackground
-    navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
-    navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Select", style: .done, target: self, action: #selector(handleDone))
   }
   
-  @objc func handleDone() {
-    print("handleDone")
-    presenter.popToRoot()
-    //presenter.popToRoot()
-  }
-  
-  @objc func handleCancel() {
-    presenter.popToRoot()
+  private func setupSearchController() {
+    searchController.searchResultsUpdater = self
+    searchController.obscuresBackgroundDuringPresentation = false
+    searchController.searchBar.placeholder = "Search Currency"
+    searchController.isActive = true
+    navigationItem.searchController = searchController
+    navigationItem.hidesSearchBarWhenScrolling = false
+    definesPresentationContext = true
   }
 }
 
 extension CurrenciesListView: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return presenter.currenciesList?.count ?? 0
+    return presenter.numberOfRows()
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-    
-    let currentCurrency = presenter.currenciesList?[indexPath.row]
     cell.textLabel?.textAlignment = .center
-    cell.textLabel?.text = currentCurrency
-    
+     
+    if isFiltering {
+      cell.textLabel?.text = presenter.filteredList?[indexPath.row]
+    } else {
+      cell.textLabel?.text = presenter.currenciesList?[indexPath.row]
+    }
+     
     return cell
   }
 }
 
 extension CurrenciesListView: UITableViewDelegate { 
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    let currentCurrency = presenter.currenciesList?[indexPath.row]
-    guard let currentCurrency else { return }
+    
+    let currentCurrency: String
+    if isFiltering {
+      currentCurrency = presenter.filteredList?[indexPath.row] ?? "n/a"
+    } else {
+      currentCurrency = presenter.currenciesList?[indexPath.row] ?? "n/a"
+    }
+    
     sendCurrencyDelegate?.sendSelectedCurrency(currency: currentCurrency)
-    //presenter.popToRoot()
+    presenter.popToRoot()
   }
 }
-
-//#if DEBUG
-//import SwiftUI
-//
-//struct ListViewController_Preview: PreviewProvider {
-//    static var previews: some View = Preview(
-//        for: CurrenciesListView()
-//    )
-//}
-//#endif
+ 

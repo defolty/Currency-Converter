@@ -16,7 +16,8 @@ extension FloatingPoint {
     Formatter.currentNumber.minimumFractionDigits = min
     Formatter.currentNumber.maximumFractionDigits = max
     Formatter.currentNumber.roundingMode = roundingMode
-    Formatter.currentNumber.numberStyle = .decimal
+    Formatter.currentNumber.numberStyle = .currency
+    Formatter.currentNumber.currencySymbol = ""
     return Formatter.currentNumber.string(for: self) ?? ""
   }
 }

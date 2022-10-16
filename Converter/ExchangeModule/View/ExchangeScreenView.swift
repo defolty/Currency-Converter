@@ -57,11 +57,11 @@ extension ExchangeScreenView: SendSelectedCurrency {
 
 final class ExchangeScreenView: UIViewController {
   
-  let activityIndicator = ActivityIndicator()
   var presenter: ExchangeViewPresenterProtocol!
+  private let activityIndicator = ActivityIndicator()
   private var scrollOffset : CGFloat = 0
   private var distance : CGFloat = 0
-  var tempCurrency: String?
+  private var tempCurrency: String?
    
   private let scrollView: UIScrollView = {
     let scrollView = UIScrollView()
@@ -196,15 +196,15 @@ final class ExchangeScreenView: UIViewController {
   
   @objc
   private func swapCurrencies(sender: UIButton) {
-    print("swap button")
+    presenter.swapButtons()
   }
   
   @objc
   private func textFieldsDidEditing(textField: UITextField) {
     guard let text = textField.text else { return }
     let activeField: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField
-    
-    presenter.getValuesFromView(field: activeField, value: text) 
+    presenter.activeField = activeField
+    presenter.getValuesFromView(value: text) //field: activeField,
     textField.text = presenter.showNumbersToUser(numbers: text)
   }
   
@@ -223,7 +223,8 @@ final class ExchangeScreenView: UIViewController {
   }
   
   private func setupNavigationBar() {
-    title = "Currency Converter"
+    navigationItem.backButtonTitle = ""
+    title = "Currency Converter" 
     navigationItem.leftBarButtonItem = UIBarButtonItem(
       image: UIImage(systemName: "gear"),
       style: .plain,
@@ -239,7 +240,7 @@ final class ExchangeScreenView: UIViewController {
     presenter.valueForFirstField = "100"
     presenter.activeField = .firstTextField
     presenter.selectedButton = .fromButton
-    presenter.getValuesFromView(field: .firstTextField, value: "100")
+    presenter.getValuesFromView(value: "100") //field: .firstTextField, 
   }
   
   // MARK: - Setup Constraint's

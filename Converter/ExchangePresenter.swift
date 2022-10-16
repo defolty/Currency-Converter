@@ -26,13 +26,6 @@ protocol ExchangeViewPresenterProtocol: AnyObject {
        networkService: NetworkServiceProtocol,
        router: RouterProtocol?
   )
-  func exchangeCurrencies(fromValue: String, toValue: String)
-  func getValuesFromView(field: ActiveTextField, value: String)
-  func setValues(rateForAmount: String, activeField: ActiveTextField)
-  func showNumbersToUser(numbers: String) -> String
-  func updateSelectedCurrency(currency: String)
-  func tapOnButton()
-  
   var selectedButton: SelectedButtonCondition? { get set }
   var activeField: ActiveTextField? { get set }
   var exchangeModel: ExchangeCurrenciesData? { get set }
@@ -42,6 +35,14 @@ protocol ExchangeViewPresenterProtocol: AnyObject {
   var valueForFirstField: String? { get set }
   var valueForSecondField: String? { get set }
   var amount: String? { get set }
+  
+  func updateSelectedCurrency(currency: String)
+  func swapButtons()
+  func getValuesFromView(value: String) //field: ActiveTextField,
+  func exchangeCurrencies(fromValue: String, toValue: String)
+  func setValues(rateForAmount: String) //, activeField: ActiveTextField
+  func showNumbersToUser(numbers: String) -> String
+  func tapOnButton()
 }
 
 final class ExchangePresenter: ExchangeViewPresenterProtocol {
@@ -66,28 +67,38 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   }
    
   func updateSelectedCurrency(currency: String) {
-    guard let selectedButton, let amount, let activeField else {
-      return
-    }
+    guard let selectedButton, let amount else { return }
      
     switch selectedButton {
     case .fromButton:
       fromCurrency = currency
+      activeField = .firstTextField
     case .toButton:
       toCurrency = currency
+      activeField = .secondTextField
     }
-     
-    getValuesFromView(field: activeField, value: amount)
+    
+    //guard let activeField else { return }
+    getValuesFromView(value: amount) //field: activeField,
   }
   
-  func getValuesFromView(field: ActiveTextField, value: String) {
-    guard let fromCurrency, let toCurrency else { return }
+  func swapButtons() {
+    let tempFromButton = fromCurrency
+    let tempToButton = toCurrency
+    fromCurrency = tempToButton
+    toCurrency = tempFromButton
+    guard let amount else { return }
+    getValuesFromView(value: amount)
+  }
+  
+  func getValuesFromView(value: String) { //field: ActiveTextField,
+    guard let fromCurrency, let toCurrency, let activeField else { return }
     let safeValue = value.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)
     
     amount = safeValue
-    activeField = field
+    //activeField = field
     
-    switch field {
+    switch activeField {
     case .firstTextField:
       exchangeCurrencies(fromValue: fromCurrency, toValue: toCurrency)
     case .secondTextField:
@@ -107,9 +118,8 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
           self.exchangeModel = model
           guard let rateForAmount = model?.rates?.first?.value.rateForAmount else { return }
           self.setValues(
-            rateForAmount: rateForAmount,
-            activeField: self.activeField!
-          )
+            rateForAmount: rateForAmount
+          ) //activeField: self.activeField!
         case .failure(let error):
           self.view?.failure(error: error)
         }
@@ -117,9 +127,9 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     }
   }
   
-  func setValues(rateForAmount: String, activeField: ActiveTextField) {
+  func setValues(rateForAmount: String) { //, activeField: ActiveTextField
     let rateForAmountAsDouble = Double(rateForAmount)
-    
+    guard let activeField else { return }
     switch activeField {
     case .firstTextField:
       valueForSecondField = rateForAmountAsDouble?.fractionDigits(min: 0, max: 2, roundingMode: .down)
@@ -132,17 +142,11 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   }
   
   func showNumbersToUser(numbers: String) -> String {
-    let currencyFormatter = NumberFormatter()
-    currencyFormatter.usesGroupingSeparator = true
-    currencyFormatter.numberStyle = .currency
-    currencyFormatter.currencySymbol = ""
-    // currencyFormatter.locale = Locale.current
-    
-    let numbersToDouble = Double(numbers)
-    guard let numbersToDouble else { return "n/a" }
-    let currencyString = currencyFormatter.string(from: NSNumber(value: numbersToDouble))
-    guard let currencyString else { return "n/a" }
-    return currencyString
+    if let numbersToDouble = Double(numbers) {
+      let currencyString = numbersToDouble.fractionDigits(min: 0, max: 2)
+      return currencyString
+    }
+    return "0.0"
   }
   
   func tapOnButton() {

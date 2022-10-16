@@ -13,23 +13,48 @@ protocol CurrenciesListViewProtocol: AnyObject {
 }
 
 protocol CurrenciesListViewPresenterProtocol: AnyObject {
-  init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?)
-  func getCurrenciesList()
-  func popToRoot() 
+  init(view: CurrenciesListViewProtocol,
+       networkService: NetworkServiceProtocol,
+       router: RouterProtocol?
+  )
   var currenciesList: [String]? { get set }
+  var filteredList: [String]? { get set }
+  var isFiltered: Bool { get set }
+  
+  func getCurrenciesList()
+  func numberOfRows() -> Int
+  func filterList(text: String, state: Bool)
+  func popToRoot()
 }
 
 final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
   weak var view: CurrenciesListViewProtocol?
   let networkService: NetworkServiceProtocol!
-  var router: RouterProtocol? 
+  var router: RouterProtocol?
+  
   var currenciesList: [String]?
+  var filteredList: [String]?
+  var isFiltered = false
   
   required init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
     self.view = view
     self.networkService = networkService
     self.router = router
     getCurrenciesList()
+  }
+  
+  func numberOfRows() -> Int {
+    if isFiltered {
+      return filteredList?.count ?? 0
+    } else {
+      return currenciesList?.count ?? 0
+    }
+  }
+  
+  func filterList(text: String, state: Bool) {
+    isFiltered = state
+    guard let currenciesList else { return }
+    filteredList = currenciesList.filter { $0.lowercased().contains(text.lowercased()) }
   }
    
   func getCurrenciesList() {

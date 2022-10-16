@@ -10,7 +10,7 @@ import UIKit
 class ActivityIndicator: UIVisualEffectView {
   
   let activityIndictor: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
-  let blurEffect = UIBlurEffect(style: .dark)
+  let blurEffect = UIBlurEffect(style: .systemChromeMaterial)
   let vibrancyView: UIVisualEffectView
   
   init() {
@@ -28,6 +28,7 @@ class ActivityIndicator: UIVisualEffectView {
   func setup() {
     contentView.addSubview(vibrancyView)
     vibrancyView.contentView.addSubview(activityIndictor)
+    activityIndictor.hidesWhenStopped = true
     activityIndictor.startAnimating()
   }
   

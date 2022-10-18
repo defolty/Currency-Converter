@@ -39,7 +39,7 @@ class NetworkService: NetworkServiceProtocol {
     }.resume()
   }
   
-  func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion) {
+  func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion) { 
     let url = "\(Constants.firstPartUrl)\(fromValue)&to=\(toValue)&amount=\(amount)&apiKey=\(Constants.apiKey)&format=json"
     let request = NSMutableURLRequest(
       url: NSURL(string: url)! as URL,

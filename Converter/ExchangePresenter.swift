@@ -90,10 +90,14 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     getValuesFromView(value: amount)
   }
   
-  func getValuesFromView(value: String) { //field: ActiveTextField,
-    guard let fromCurrency, let toCurrency, let activeField else { return }
-    let safeValue = value.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)
+  func getValuesFromView(value: String) {
+    print("getValuesFromView value", "\(value)!")
     
+    guard let fromCurrency, let toCurrency, let activeField else { return }
+    
+    let safeValue = value.replacingOccurrences(of: ",", with: "")
+    print("getValuesFromView safeValue", safeValue)
+     
     amount = safeValue
     
     switch activeField {
@@ -140,11 +144,25 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   }
   
   func showNumbersToUser(numbers: String) -> String {
-    if let numbersToDouble = Double(numbers) {
+    print("\n")
+    print("showNumbersToUser")
+    print("numbers", numbers)
+    
+    let safeNumbers = numbers.replacingOccurrences(of: ",", with: ".")
+    print("safeNumbers", safeNumbers)
+    
+    let safeNumbersWithoutSpace = safeNumbers.replacingOccurrences(of: " ", with: "")
+    print("safeNumbersWithoutSpace", safeNumbersWithoutSpace)
+    
+    if let numbersToDouble = Double(safeNumbersWithoutSpace) {
+      
       let currencyString = numbersToDouble.fractionDigits(min: 0, max: 2)
+      print("currencyString", currencyString)
+      print("showNumbersToUser end", "\n")
+      
       return currencyString
     }
-    return "0.0"
+    return "error"
   }
   
   func tapOnButton() {

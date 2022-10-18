@@ -10,7 +10,25 @@ import SnapKit
 
 extension ExchangeScreenView: UITextFieldDelegate {
   func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-    textField.validInput(textField: textField, range: range, string: string, numberOfCharacter: 8, maxDecimalPlaces: 2)
+    //textField.validInput(textField: textField, range: range, string: string, numberOfCharacter: 10, maxDecimalPlaces: 3)
+    return true
+//    // get the current text, or use an empty string if that failed
+//    let currentText = textField.text ?? ""
+//    print("currentText", currentText)
+//
+//    // attempt to read the range they are trying to change, or exit if we can't
+//    guard let stringRange = Range(range, in: currentText) else { return false }
+//    print("stringRange", stringRange)
+//
+//
+//    // add their new text to the existing text
+//    let updatedText = formNumber.replacingCharacters(in: stringRange, with: string)
+//    print("updatedText", updatedText)
+//    print("string", string)
+//
+//
+//    // make sure the result is under 16 characters
+//    return updatedText.count <= 22
   }
 }
 
@@ -108,7 +126,7 @@ final class ExchangeScreenView: UIViewController {
     textfield.clearsOnBeginEditing = true
     textfield.smartDashesType = .no
     textfield.delegate = self
-    textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingDidEnd)
+    textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
     self.view.addSubview(textfield)
     return textfield
   }()
@@ -127,7 +145,7 @@ final class ExchangeScreenView: UIViewController {
     textfield.clearsOnBeginEditing = true
     textfield.smartDashesType = .no
     textfield.delegate = self
-    textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingDidEnd)
+    textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
     self.view.addSubview(textfield)
     return textfield
   }()
@@ -202,10 +220,64 @@ final class ExchangeScreenView: UIViewController {
   @objc
   private func textFieldsDidEditing(textField: UITextField) {
     guard let text = textField.text else { return }
+    print("\ntext", text)
+     
     let activeField: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField
     presenter.activeField = activeField
-    presenter.getValuesFromView(value: text)
-    textField.text = presenter.showNumbersToUser(numbers: text)
+     
+    if let amountString = textField.text?.currencyInputFormatting() {
+      textField.text = amountString 
+      print("amountString", "\(amountString)!")
+      presenter.getValuesFromView(value: amountString)
+    }
+    
+//    textField.text!.removeAll { !("0"..."9" ~= $0) }
+//        let textTwo = textField.text!
+//        for index in textTwo.indices.reversed() {
+//            if textTwo.distance(from: textTwo.endIndex, to: index).isMultiple(of: 3) &&
+//                index != textTwo.startIndex &&
+//                index != textTwo.endIndex {
+//              textField.text!.insert(" ", at: index)
+//            }
+//        }
+//        print(textField.text!)
+   
+//    let cleanText = text.replacingOccurrences(of: ",", with: "")
+//
+//    let textToDouble = Double(cleanText)
+//    guard let textToDouble else { return }
+//    //print("textToDouble", textToDouble)
+//
+//    //let fractionText = textToDouble.fractionDigits(min: 0, max: 2)
+//    //print("fractionText", fractionText)
+//
+//    let formatter = NumberFormatter()
+//    formatter.allowsFloats = true
+//    //formatter.minimum = 0.0001
+//    //formatter.maximum = 999999999.999
+//    formatter.usesGroupingSeparator = true
+//    formatter.minimumFractionDigits = 0
+//    //formatter.maximumFractionDigits = 4
+//    formatter.numberStyle = .currency
+//    formatter.currencyDecimalSeparator = "."
+//    formatter.currencyGroupingSeparator = ","
+//    formatter.currencySymbol = ""
+//
+//    let formNumber = formatter.string(from: textToDouble as NSNumber)
+//    //let formNumber = formatter.number(from: cleanText)
+//    guard let formNumber else { return }
+//    print("formNumber", formNumber)
+//
+//    presenter.getValuesFromView(value: formNumber)
+    
+    //textField.text = formNumber
+     
+    //let safeText = text.replacingOccurrences(of: " ", with: "")
+    //print("safeText", safeText)
+    //presenter.getValuesFromView(value: safeText)
+    //let temp = presenter.showNumbersToUser(numbers: safeText)
+    //print("temp", temp)
+    //textField.text = temp
   }
   
   @objc

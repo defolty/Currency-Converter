@@ -37,11 +37,11 @@ protocol ExchangeViewPresenterProtocol: AnyObject {
   var amount: String? { get set }
   
   func updateSelectedCurrency(currency: String)
+  func clearValues()
   func swapButtons()
   func getValuesFromView(value: String)
   func exchangeCurrencies(fromValue: String, toValue: String)
   func setValues(rateForAmount: String)
-  func showNumbersToUser(numbers: String) -> String
   func tapOnButton()
 }
 
@@ -77,7 +77,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
       toCurrency = currency
       activeField = .secondTextField
     }
-     
+    
     getValuesFromView(value: amount)
   }
   
@@ -91,12 +91,8 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   }
   
   func getValuesFromView(value: String) {
-    print("getValuesFromView value", "\(value)!")
-    
-    guard let fromCurrency, let toCurrency, let activeField else { return }
-    
-    let safeValue = value.replacingOccurrences(of: ",", with: "")
-    print("getValuesFromView safeValue", safeValue)
+    guard let fromCurrency, let toCurrency, let activeField else { return } 
+    let safeValue = value.replacingOccurrences(of: " ", with: "")
      
     amount = safeValue
     
@@ -128,43 +124,30 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
       }
     }
   }
-  
+   
   func setValues(rateForAmount: String) {  
     let rateForAmountAsDouble = Double(rateForAmount)
+    
     guard let activeField else { return }
     switch activeField {
     case .firstTextField:
-      valueForSecondField = rateForAmountAsDouble?.fractionDigits(min: 0, max: 2, roundingMode: .down)
+      valueForSecondField = rateForAmountAsDouble?.fractionDigits(min: 2, max: 2, roundingMode: .halfEven)
     case .secondTextField:
-      valueForFirstField = rateForAmountAsDouble?.fractionDigits(min: 0, max: 2, roundingMode: .down)
+      valueForFirstField = rateForAmountAsDouble?.fractionDigits(min: 2, max: 2, roundingMode: .halfEven) 
     }
     
     view?.showIndicator(show: false)
     view?.updateViews(field: activeField)
   }
   
-  func showNumbersToUser(numbers: String) -> String {
-    print("\n")
-    print("showNumbersToUser")
-    print("numbers", numbers)
+  func clearValues() {
+    valueForFirstField = ""
+    valueForSecondField = ""
     
-    let safeNumbers = numbers.replacingOccurrences(of: ",", with: ".")
-    print("safeNumbers", safeNumbers)
-    
-    let safeNumbersWithoutSpace = safeNumbers.replacingOccurrences(of: " ", with: "")
-    print("safeNumbersWithoutSpace", safeNumbersWithoutSpace)
-    
-    if let numbersToDouble = Double(safeNumbersWithoutSpace) {
-      
-      let currencyString = numbersToDouble.fractionDigits(min: 0, max: 2)
-      print("currencyString", currencyString)
-      print("showNumbersToUser end", "\n")
-      
-      return currencyString
-    }
-    return "error"
+    view?.updateViews(field: .firstTextField)
+    view?.updateViews(field: .secondTextField)
   }
-  
+    
   func tapOnButton() {
       router?.showCurrenciesList()
   }

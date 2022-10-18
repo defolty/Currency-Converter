@@ -9,29 +9,12 @@ import UIKit
 import SnapKit
 
 extension ExchangeScreenView: UITextFieldDelegate {
-  func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-    //textField.validInput(textField: textField, range: range, string: string, numberOfCharacter: 10, maxDecimalPlaces: 3)
-    return true
-//    // get the current text, or use an empty string if that failed
-//    let currentText = textField.text ?? ""
-//    print("currentText", currentText)
-//
-//    // attempt to read the range they are trying to change, or exit if we can't
-//    guard let stringRange = Range(range, in: currentText) else { return false }
-//    print("stringRange", stringRange)
-//
-//
-//    // add their new text to the existing text
-//    let updatedText = formNumber.replacingCharacters(in: stringRange, with: string)
-//    print("updatedText", updatedText)
-//    print("string", string)
-//
-//
-//    // make sure the result is under 16 characters
-//    return updatedText.count <= 22
+  func textFieldShouldClear(_ textField: UITextField) -> Bool { 
+    presenter.clearValues() 
+    return false
   }
 }
-
+ 
 extension ExchangeScreenView: ExchangeViewProtocol { 
   func updateViews(field: ActiveTextField) {
     firstCurrencySelectionButton.setTitle(
@@ -57,19 +40,15 @@ extension ExchangeScreenView: ExchangeViewProtocol {
       activityIndicator.hide()
     }
   }
-  
+   
   func failure(error: Error) {
     self.showAlert(withTitle: "Error", withMessage: error.localizedDescription)
   }
 }
 
-protocol SendSelectedCurrency: AnyObject {
-  func sendSelectedCurrency(currency: String)
-}
-
 extension ExchangeScreenView: SendSelectedCurrency {
   func sendSelectedCurrency(currency: String) {
-    tempCurrency = currency
+    currencyDidSelected = currency
   }
 }
 
@@ -79,7 +58,7 @@ final class ExchangeScreenView: UIViewController {
   private let activityIndicator = ActivityIndicator()
   private var scrollOffset : CGFloat = 0
   private var distance : CGFloat = 0
-  private var tempCurrency: String?
+  private var currencyDidSelected: String?
   
   private let scrollView: UIScrollView = {
     let scrollView = UIScrollView()
@@ -114,7 +93,7 @@ final class ExchangeScreenView: UIViewController {
   private lazy var firstCurrencyTextField: UITextField = {
     let textfield = UITextField()
     textfield.placeholder = "You can type here..."
-    textfield.text = "100"
+    textfield.text = "100.00"
     textfield.adjustsFontSizeToFitWidth = true
     textfield.textAlignment = .center
     textfield.textColor = .white
@@ -122,8 +101,7 @@ final class ExchangeScreenView: UIViewController {
     textfield.keyboardType = .decimalPad
     textfield.layer.cornerRadius = 12
     textfield.isUserInteractionEnabled = true
-    textfield.clearButtonMode = .always
-    textfield.clearsOnBeginEditing = true
+    textfield.clearButtonMode = .whileEditing
     textfield.smartDashesType = .no
     textfield.delegate = self
     textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
@@ -139,10 +117,8 @@ final class ExchangeScreenView: UIViewController {
     textfield.textColor = .white
     textfield.backgroundColor = .systemPink
     textfield.keyboardType = .decimalPad
-    textfield.layer.cornerRadius = 12
-    textfield.isUserInteractionEnabled = true
-    textfield.clearButtonMode = .always
-    textfield.clearsOnBeginEditing = true
+    textfield.layer.cornerRadius = 12 
+    textfield.clearButtonMode = .whileEditing
     textfield.smartDashesType = .no
     textfield.delegate = self
     textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
@@ -193,8 +169,8 @@ final class ExchangeScreenView: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     
-    if let tempCurrency {
-      presenter.updateSelectedCurrency(currency: tempCurrency)
+    if let currencyDidSelected { 
+      presenter.updateSelectedCurrency(currency: currencyDidSelected)
     }
   }
   
@@ -219,65 +195,13 @@ final class ExchangeScreenView: UIViewController {
   
   @objc
   private func textFieldsDidEditing(textField: UITextField) {
-    guard let text = textField.text else { return }
-    print("\ntext", text)
-     
     let activeField: ActiveTextField = textField == firstCurrencyTextField ? .firstTextField : .secondTextField
     presenter.activeField = activeField
      
     if let amountString = textField.text?.currencyInputFormatting() {
-      textField.text = amountString 
-      print("amountString", "\(amountString)!")
+      textField.text = amountString
       presenter.getValuesFromView(value: amountString)
     }
-    
-//    textField.text!.removeAll { !("0"..."9" ~= $0) }
-//        let textTwo = textField.text!
-//        for index in textTwo.indices.reversed() {
-//            if textTwo.distance(from: textTwo.endIndex, to: index).isMultiple(of: 3) &&
-//                index != textTwo.startIndex &&
-//                index != textTwo.endIndex {
-//              textField.text!.insert(" ", at: index)
-//            }
-//        }
-//        print(textField.text!)
-   
-//    let cleanText = text.replacingOccurrences(of: ",", with: "")
-//
-//    let textToDouble = Double(cleanText)
-//    guard let textToDouble else { return }
-//    //print("textToDouble", textToDouble)
-//
-//    //let fractionText = textToDouble.fractionDigits(min: 0, max: 2)
-//    //print("fractionText", fractionText)
-//
-//    let formatter = NumberFormatter()
-//    formatter.allowsFloats = true
-//    //formatter.minimum = 0.0001
-//    //formatter.maximum = 999999999.999
-//    formatter.usesGroupingSeparator = true
-//    formatter.minimumFractionDigits = 0
-//    //formatter.maximumFractionDigits = 4
-//    formatter.numberStyle = .currency
-//    formatter.currencyDecimalSeparator = "."
-//    formatter.currencyGroupingSeparator = ","
-//    formatter.currencySymbol = ""
-//
-//    let formNumber = formatter.string(from: textToDouble as NSNumber)
-//    //let formNumber = formatter.number(from: cleanText)
-//    guard let formNumber else { return }
-//    print("formNumber", formNumber)
-//
-//    presenter.getValuesFromView(value: formNumber)
-    
-    //textField.text = formNumber
-     
-    //let safeText = text.replacingOccurrences(of: " ", with: "")
-    //print("safeText", safeText)
-    //presenter.getValuesFromView(value: safeText)
-    //let temp = presenter.showNumbersToUser(numbers: safeText)
-    //print("temp", temp)
-    //textField.text = temp
   }
   
   @objc
@@ -297,22 +221,24 @@ final class ExchangeScreenView: UIViewController {
   private func setupNavigationBar() {
     navigationItem.backButtonTitle = ""
     title = "Currency Converter"
-    //    navigationItem.leftBarButtonItem = UIBarButtonItem(
-    //      image: UIImage(systemName: "gear"),
-    //      style: .plain,
-    //      target: self,
-    //      action: #selector(settingsNavigationBarTapped)
-    //    )
+    navigationItem.leftBarButtonItem = UIBarButtonItem(
+      image: UIImage(systemName: "gear"),
+      style: .plain,
+      target: self,
+      action: #selector(settingsNavigationBarTapped)
+    )
+    ///# future
+    navigationItem.leftBarButtonItem?.tintColor = .systemBackground
   }
   
   private func initialValues() {
     presenter.fromCurrency = "EUR"
     presenter.toCurrency = "RUB"
-    presenter.amount = "100"
-    presenter.valueForFirstField = "100"
+    presenter.amount = "100.00"
+    presenter.valueForFirstField = "100.00"
     presenter.activeField = .firstTextField
     presenter.selectedButton = .fromButton
-    presenter.getValuesFromView(value: "100")
+    presenter.getValuesFromView(value: "100.00")
   }
   
   // MARK: - Setup Constraint's

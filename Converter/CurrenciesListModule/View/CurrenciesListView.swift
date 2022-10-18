@@ -62,7 +62,11 @@ extension CurrenciesListView: UITableViewDelegate {
     presenter.popToRoot()
   }
 }
-  
+   
+protocol SendSelectedCurrency: AnyObject {
+  func sendSelectedCurrency(currency: String)
+}
+ 
 final class CurrenciesListView: UIViewController {
   
   private var tableView = UITableView()

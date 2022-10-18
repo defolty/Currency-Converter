@@ -41,19 +41,20 @@ class Router: RouterProtocol {
   func showCurrenciesList() { 
     if let navigationController {
       guard let currenciesVC = assemblyBuilder?.createCurrenciesListModule(router: self) else { return }
-      //let targetVC = UINavigationController(rootViewController: currenciesVC)
-      //navigationController.present(targetVC, animated: true)
       currenciesListView = currenciesVC
       guard let currenciesListView else { return }
       currenciesListView.sendCurrencyDelegate = exchangeScreenView
       navigationController.pushViewController(currenciesVC, animated: true)
+      
+      ///# for `modal view`
+      ///# let targetVC = UINavigationController(rootViewController: currenciesVC)
+      ///# navigationController.present(targetVC, animated: true)
     }
   }
    
   func popToRoot() {
     if let navigationController {
       navigationController.popToRootViewController(animated: true)
-      //navigationController.dismiss(animated: true)
     }
   }
 } 

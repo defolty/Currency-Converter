@@ -7,7 +7,7 @@
 
 import Foundation
 
-  // MARK: - Enums
+  // MARK: - Condition Enums
 
 enum SelectedButtonCondition {
   case fromButton, toButton
@@ -92,10 +92,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   // MARK: - Methods
   
   func swapCurrenciesButtons() {
-    let tempFromButton = fromCurrency
-    let tempToButton = toCurrency
-    fromCurrency = tempToButton
-    toCurrency = tempFromButton
+    swap(&fromCurrency, &toCurrency)
     guard let amount else { return }
     getValuesFromView(value: amount)
   }

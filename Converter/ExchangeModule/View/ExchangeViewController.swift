@@ -70,7 +70,7 @@ final class ExchangeViewController: UIViewController {
   private var distance : CGFloat = 0
   private var currencyDidSelected: String?
   
-  // MARK: - UI - Elements
+  // MARK: - Config UI Elements
   
   private let scrollView: UIScrollView = {
     let scrollView = UIScrollView()
@@ -90,7 +90,7 @@ final class ExchangeViewController: UIViewController {
       weight: .regular,
       scale: .default)
     let image = UIImage(
-      systemName: "chevron.up.chevron.down",
+      systemName: "rectangle.2.swap",
       withConfiguration: config)
     swapButton.setImage(image, for: .normal)
     swapButton.tintColor = .systemIndigo
@@ -103,51 +103,24 @@ final class ExchangeViewController: UIViewController {
   }()
   
   private lazy var firstCurrencyTextField: UITextField = {
-    let textfield = UITextField()
-    textfield.placeholder = "You can type here..."
-    textfield.text = "100.00"
-    textfield.adjustsFontSizeToFitWidth = true
-    textfield.textAlignment = .center
-    textfield.textColor = .white
-    textfield.backgroundColor = .systemPink
-    textfield.keyboardType = .decimalPad
-    textfield.layer.cornerRadius = 12
-    textfield.isUserInteractionEnabled = true
-    textfield.clearButtonMode = .whileEditing
-    textfield.smartDashesType = .no
-    textfield.delegate = self
-    textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
-    self.view.addSubview(textfield)
-    return textfield
+    let textField = UITextField()
+    textField.placeholder = "You can type here..."
+    textField.text = "100.00"
+    self.view.addSubview(textField)
+    return textField
   }()
   
   private lazy var secondCurrencyTextField: UITextField = {
-    let textfield = UITextField()
-    textfield.placeholder = "or here..."
-    textfield.adjustsFontSizeToFitWidth = true
-    textfield.textAlignment = .center
-    textfield.textColor = .white
-    textfield.backgroundColor = .systemPink
-    textfield.keyboardType = .decimalPad
-    textfield.layer.cornerRadius = 12 
-    textfield.clearButtonMode = .whileEditing
-    textfield.smartDashesType = .no
-    textfield.delegate = self
-    textfield.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
-    self.view.addSubview(textfield)
-    return textfield
+    let textField = UITextField()
+    textField.placeholder = "or here..."
+    self.view.addSubview(textField)
+    return textField
   }()
   
   private lazy var firstCurrencySelectionButton: UIButton = {
     let button = UIButton(type: .system)
     button.tag = 1
     button.setTitle("EUR", for: .normal)
-    button.backgroundColor = .systemIndigo
-    button.tintColor = .white
-    button.layer.cornerRadius = 12
-    button.clipsToBounds = true
-    button.addTarget(self, action: #selector(selectCurrency), for: .touchUpInside)
-    button.isUserInteractionEnabled = true
     self.view.addSubview(button)
     return button
   }()
@@ -156,12 +129,6 @@ final class ExchangeViewController: UIViewController {
     let button = UIButton(type: .system)
     button.tag = 2
     button.setTitle("RUB", for: .normal)
-    button.backgroundColor = .systemIndigo
-    button.tintColor = .white
-    button.layer.cornerRadius = 12
-    button.clipsToBounds = true
-    button.addTarget(self, action: #selector(selectCurrency), for: .touchUpInside)
-    button.isUserInteractionEnabled = true
     self.view.addSubview(button)
     return button
   }()
@@ -173,6 +140,8 @@ final class ExchangeViewController: UIViewController {
     
     view.backgroundColor = .systemBackground
     addSubviews()
+    configureTextFields()
+    configureButtons()
     setupNavigationBar()
     setupConstaints()
     registerForKeyboardNotifications()
@@ -244,7 +213,35 @@ final class ExchangeViewController: UIViewController {
     ///# future
     navigationItem.leftBarButtonItem?.tintColor = .systemBackground
   }
+   
+  private func configureTextFields() {
+    let textFields = [firstCurrencyTextField, secondCurrencyTextField]
+    for textField in textFields {
+      textField.adjustsFontSizeToFitWidth = true
+      textField.textAlignment = .center
+      textField.textColor = .white
+      textField.backgroundColor = .systemPink
+      textField.keyboardType = .decimalPad
+      textField.layer.cornerRadius = 12
+      textField.clearButtonMode = .whileEditing
+      textField.smartDashesType = .no
+      textField.delegate = self
+      textField.addTarget(self, action: #selector(textFieldsDidEditing(textField:)), for: .editingChanged)
+    }
+  }
   
+  private func configureButtons() {
+    let buttons = [firstCurrencySelectionButton, secondCurrencySelectionButton]
+    for button in buttons {
+      button.backgroundColor = .systemIndigo
+      button.tintColor = .white
+      button.layer.cornerRadius = 12
+      button.clipsToBounds = true
+      button.addTarget(self, action: #selector(selectCurrency), for: .touchUpInside)
+      button.isUserInteractionEnabled = true
+    }
+  }
+   
   private func initialValues() {
     presenter.fromCurrency = "EUR"
     presenter.toCurrency = "RUB"

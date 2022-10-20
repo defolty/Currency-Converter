@@ -109,7 +109,7 @@ final class CurrenciesListViewController: UIViewController {
     setupSearchController()
   }
    
-  // MARK: - Setup UI
+  // MARK: - Config UI
    
   private func setupTableView() {
     safeArea = view.layoutMarginsGuide

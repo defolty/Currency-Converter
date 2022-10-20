@@ -1,5 +1,5 @@
 //
-//  MainScreenView.swift
+//  ExchangeViewController.swift
 //  Converter
 //
 //  Created by Nikita Nesporov on 05.10.2022.
@@ -8,15 +8,19 @@
 import UIKit
 import SnapKit
 
-extension ExchangeScreenView: UITextFieldDelegate {
-  func textFieldShouldClear(_ textField: UITextField) -> Bool { 
-    presenter.clearValues() 
+  // MARK: - Extension UITextFieldDelegate
+
+extension ExchangeViewController: UITextFieldDelegate {
+  func textFieldShouldClear(_ textField: UITextField) -> Bool {
+    presenter.clearValues()
     return false
   }
 }
+
+  // MARK: - Extension ExchangeViewProtocol
  
-extension ExchangeScreenView: ExchangeViewProtocol { 
-  func updateViews(field: ActiveTextField) {
+extension ExchangeViewController: ExchangeViewProtocol { 
+  func presentUpdatedViews(field: ActiveTextField) {
     firstCurrencySelectionButton.setTitle(
       presenter.fromCurrency,
       for: .normal)
@@ -32,7 +36,7 @@ extension ExchangeScreenView: ExchangeViewProtocol {
     }
   }
   
-  func showIndicator(show: Bool) {
+  func presentIndicator(show: Bool) {
     switch show {
     case true:
       activityIndicator.show()
@@ -41,24 +45,32 @@ extension ExchangeScreenView: ExchangeViewProtocol {
     }
   }
    
-  func failure(error: Error) {
+  func presentFailure(error: Error) {
     self.showAlert(withTitle: "Error", withMessage: error.localizedDescription)
   }
 }
+  
+  // MARK: - Extension Delegate Get Selected Currency From Currencies List
 
-extension ExchangeScreenView: SendSelectedCurrency {
+extension ExchangeViewController: SendSelectedCurrency {
   func sendSelectedCurrency(currency: String) {
     currencyDidSelected = currency
   }
 }
 
-final class ExchangeScreenView: UIViewController {
+  // MARK: - Class Exchange ViewController
+
+final class ExchangeViewController: UIViewController {
+  
+  // MARK: - Properties
   
   var presenter: ExchangeViewPresenterProtocol!
   private let activityIndicator = ActivityIndicator()
   private var scrollOffset : CGFloat = 0
   private var distance : CGFloat = 0
   private var currencyDidSelected: String?
+  
+  // MARK: - UI - Elements
   
   private let scrollView: UIScrollView = {
     let scrollView = UIScrollView()
@@ -154,6 +166,8 @@ final class ExchangeScreenView: UIViewController {
     return button
   }()
   
+  // MARK: - Life Cycles
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -185,12 +199,12 @@ final class ExchangeScreenView: UIViewController {
     case .toButton:
       presenter.selectedButton = .toButton
     }
-    presenter.tapOnButton()
+    presenter.selectNewCurrency()
   }
   
   @objc
   private func swapCurrencies(sender: UIButton) {
-    presenter.swapButtons()
+    presenter.swapCurrenciesButtons()
   }
   
   @objc
@@ -291,7 +305,7 @@ final class ExchangeScreenView: UIViewController {
 
 // MARK: - Keyboard Observer
 
-extension ExchangeScreenView {
+extension ExchangeViewController {
   
   private func registerForKeyboardNotifications() {
     NotificationCenter.default.addObserver(
@@ -374,6 +388,8 @@ extension ExchangeScreenView {
     view.endEditing(true)
   }
 }
+
+  // MARK: - Live Preview
 
 //#if DEBUG
 //import SwiftUI

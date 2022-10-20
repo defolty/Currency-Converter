@@ -1,5 +1,5 @@
 //
-//  ModuleBuilder.swift
+//  AssemblyBuilder.swift
 //  Converter
 //
 //  Created by Nikita Nesporov on 08.10.2022.
@@ -8,14 +8,14 @@
 import UIKit
 
 protocol AssemblyBuilderProtocol { 
-  func createExchangeModule(router: RouterProtocol) -> ExchangeScreenView
-  func createCurrenciesListModule(router: RouterProtocol) -> CurrenciesListView
+  func createExchangeModule(router: RouterProtocol) -> ExchangeViewController
+  func createCurrenciesListModule(router: RouterProtocol) -> CurrenciesListViewController
 }
 
-final class AssemblyModuleBuilder: AssemblyBuilderProtocol {
+final class AssemblyBuilder: AssemblyBuilderProtocol {
   
-  func createExchangeModule(router: RouterProtocol) -> ExchangeScreenView {
-    let view = ExchangeScreenView()
+  func createExchangeModule(router: RouterProtocol) -> ExchangeViewController {
+    let view = ExchangeViewController()
     let networkService = NetworkService()
     let presenter = ExchangePresenter(
       view: view,
@@ -26,8 +26,8 @@ final class AssemblyModuleBuilder: AssemblyBuilderProtocol {
     return view
   }
   
-  func createCurrenciesListModule(router: RouterProtocol) -> CurrenciesListView {
-    let view = CurrenciesListView()
+  func createCurrenciesListModule(router: RouterProtocol) -> CurrenciesListViewController {
+    let view = CurrenciesListViewController()
     let networkService = NetworkService()
     let presenter = CurrenciesListPresenter(
       view: view,

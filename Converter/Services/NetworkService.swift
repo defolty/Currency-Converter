@@ -1,5 +1,5 @@
 //
-//  NetworkManager.swift
+//  NetworkService.swift
 //  Converter
 //
 //  Created by Nikita Nesporov on 06.10.2022.
@@ -7,11 +7,15 @@
 
 import Foundation
 
+  // MARK: - Network Service Protocol
+
 protocol NetworkServiceProtocol {
   typealias exchangeCompletion = (Result<ExchangeCurrenciesData?, Error>) -> Void
   func getCurrenciesList(completion: @escaping (Result<CurrenciesListData?, Error>) -> Void)
   func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion)
 }
+
+// MARK: - Class Network Service
 
 class NetworkService: NetworkServiceProtocol {
   

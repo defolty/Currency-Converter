@@ -1,5 +1,5 @@
 //
-//  CurrenciesListView.swift
+//  CurrenciesListViewController.swift
 //  Converter
 //
 //  Created by Nikita Nesporov on 08.10.2022.
@@ -7,17 +7,21 @@
 
 import UIKit
 
-extension CurrenciesListView: CurrenciesListViewProtocol { 
-  func success() {
+  // MARK: - Extension CurrenciesListViewProtocol
+
+extension CurrenciesListViewController: CurrenciesListViewProtocol { 
+  func presentSuccess() {
     tableView.reloadData()
   }
    
-  func failure(error: Error) {
+  func presentFailure(error: Error) {
     self.showAlert(withTitle: "Error", withMessage: error.localizedDescription)
   }
 }
 
-extension CurrenciesListView: UISearchResultsUpdating {
+  // MARK: - Extension UISearchController
+
+extension CurrenciesListViewController: UISearchResultsUpdating {
   func updateSearchResults(for searchController: UISearchController) {
     let searchBar = searchController.searchBar
     filterContentForSearchText(searchBar.text ?? "")
@@ -28,8 +32,10 @@ extension CurrenciesListView: UISearchResultsUpdating {
     tableView.reloadData()
   }
 }
+
+ // MARK: - TableView Data Source
   
-extension CurrenciesListView: UITableViewDataSource {
+extension CurrenciesListViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return presenter.numberOfRows()
   }
@@ -48,7 +54,9 @@ extension CurrenciesListView: UITableViewDataSource {
   }
 }
 
-extension CurrenciesListView: UITableViewDelegate {
+  // MARK: - TableView Delegate
+
+extension CurrenciesListViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
     let currentCurrency: String
@@ -62,12 +70,18 @@ extension CurrenciesListView: UITableViewDelegate {
     presenter.popToRoot()
   }
 }
+
+  // MARK: - Extension Delegate Send Selected Currency
    
 protocol SendSelectedCurrency: AnyObject {
   func sendSelectedCurrency(currency: String)
 }
+
+  // MARK: - Class Currencies List ViewController
  
-final class CurrenciesListView: UIViewController {
+final class CurrenciesListViewController: UIViewController {
+  
+  // MARK: - Properties
   
   private var tableView = UITableView()
   private var safeArea: UILayoutGuide!
@@ -83,7 +97,9 @@ final class CurrenciesListView: UIViewController {
   var isSearchBarEmpty: Bool {
     return searchController.searchBar.text?.isEmpty ?? true
   }
-   
+  
+  // MARK: - Life Cycles
+  
   override func loadView() {
     super.loadView()
     
@@ -92,7 +108,9 @@ final class CurrenciesListView: UIViewController {
     setupNavigationBar()
     setupSearchController()
   }
-    
+   
+  // MARK: - Setup UI
+   
   private func setupTableView() {
     safeArea = view.layoutMarginsGuide
     view.addSubview(tableView)

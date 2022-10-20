@@ -1,14 +1,10 @@
 //
-//  ConvertCurrency.swift
+//  ExchangeCurrenciesData.swift
 //  Converter
 //
 //  Created by Nikita Nesporov on 20.12.2021.
 //
-
-struct CurrenciesListData: Codable {
-  let currencies: [String: String]
-}
-
+ 
 struct ExchangeCurrenciesData: Codable {
   var baseCurrencyName, updatedDate, status: String
   var baseCurrencyCode, amount: String

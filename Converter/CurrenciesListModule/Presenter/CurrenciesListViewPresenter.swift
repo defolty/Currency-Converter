@@ -7,10 +7,14 @@
 
 import Foundation
 
+  // MARK: - View Protocol
+
 protocol CurrenciesListViewProtocol: AnyObject {
-  func success()
-  func failure(error: Error)
+  func presentSuccess()
+  func presentFailure(error: Error)
 }
+
+  // MARK: - Presenter Protocol
 
 protocol CurrenciesListViewPresenterProtocol: AnyObject {
   init(view: CurrenciesListViewProtocol,
@@ -27,6 +31,8 @@ protocol CurrenciesListViewPresenterProtocol: AnyObject {
   func popToRoot()
 }
 
+  // MARK: - Currencies List Presenter
+
 final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
   weak var view: CurrenciesListViewProtocol?
   let networkService: NetworkServiceProtocol!
@@ -42,6 +48,8 @@ final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
     self.router = router
     getCurrenciesList()
   }
+  
+  // MARK: - Methods
   
   func numberOfRows() -> Int {
     if isFiltered {
@@ -64,9 +72,9 @@ final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
         switch result {
         case .success(let list):
           self.currenciesList = list?.currencies.map{ $0.key }.sorted()
-          self.view?.success()
+          self.view?.presentSuccess()
         case .failure(let error):
-          self.view?.failure(error: error)
+          self.view?.presentFailure(error: error)
         }
       }
     }

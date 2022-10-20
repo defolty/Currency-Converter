@@ -7,6 +7,8 @@
 
 import Foundation
 
+  // MARK: - Enums
+
 enum SelectedButtonCondition {
   case fromButton, toButton
 }
@@ -15,11 +17,15 @@ enum ActiveTextField {
   case firstTextField, secondTextField
 }
 
+  // MARK: - View Protocol
+
 protocol ExchangeViewProtocol: AnyObject {
-  func showIndicator(show: Bool)
-  func updateViews(field: ActiveTextField)
-  func failure(error: Error)
+  func presentIndicator(show: Bool)
+  func presentUpdatedViews(field: ActiveTextField)
+  func presentFailure(error: Error)
 }
+
+  // MARK: - Presenter Protocol
 
 protocol ExchangeViewPresenterProtocol: AnyObject {
   init(view: ExchangeViewProtocol,
@@ -38,12 +44,14 @@ protocol ExchangeViewPresenterProtocol: AnyObject {
   
   func updateSelectedCurrency(currency: String)
   func clearValues()
-  func swapButtons()
+  func swapCurrenciesButtons()
   func getValuesFromView(value: String)
   func exchangeCurrencies(fromValue: String, toValue: String)
   func setValues(rateForAmount: String)
-  func tapOnButton()
+  func selectNewCurrency()
 }
+
+  // MARK: - Exchange Presenter
 
 final class ExchangePresenter: ExchangeViewPresenterProtocol {
   let view: ExchangeViewProtocol?
@@ -81,7 +89,9 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     getValuesFromView(value: amount)
   }
   
-  func swapButtons() {
+  // MARK: - Methods
+  
+  func swapCurrenciesButtons() {
     let tempFromButton = fromCurrency
     let tempToButton = toCurrency
     fromCurrency = tempToButton
@@ -106,7 +116,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   
   func exchangeCurrencies(fromValue: String, toValue: String) {
     guard let amount else { return }
-    view?.showIndicator(show: true)
+    view?.presentIndicator(show: true)
     networkService.exchangeCurrencies(fromValue: fromValue, toValue: toValue, currentAmount: amount) { [weak self] result in
       guard let self else { return }
       
@@ -119,7 +129,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
             rateForAmount: rateForAmount
           )
         case .failure(let error):
-          self.view?.failure(error: error)
+          self.view?.presentFailure(error: error)
         }
       }
     }
@@ -136,19 +146,19 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
       valueForFirstField = rateForAmountAsDouble?.fractionDigits(min: 2, max: 2, roundingMode: .halfEven) 
     }
     
-    view?.showIndicator(show: false)
-    view?.updateViews(field: activeField)
+    view?.presentIndicator(show: false)
+    view?.presentUpdatedViews(field: activeField)
   }
   
   func clearValues() {
     valueForFirstField = ""
     valueForSecondField = ""
     
-    view?.updateViews(field: .firstTextField)
-    view?.updateViews(field: .secondTextField)
+    view?.presentUpdatedViews(field: .firstTextField)
+    view?.presentUpdatedViews(field: .secondTextField)
   }
     
-  func tapOnButton() {
+  func selectNewCurrency() {
       router?.showCurrenciesList()
   }
 }

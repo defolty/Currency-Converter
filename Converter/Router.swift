@@ -22,8 +22,8 @@ class Router: RouterProtocol {
   
   var navigationController: UINavigationController?
   var assemblyBuilder: AssemblyBuilderProtocol?
-  var exchangeScreenView: ExchangeScreenView?
-  var currenciesListView: CurrenciesListView?
+  var exchangeScreenView: ExchangeViewController?
+  var currenciesListView: CurrenciesListViewController?
   
   init(navigationController: UINavigationController?, assemblyBuilder: AssemblyBuilderProtocol) {
     self.navigationController = navigationController

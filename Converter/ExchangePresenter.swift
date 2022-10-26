@@ -5,7 +5,7 @@
 //  Created by Nikita Nesporov on 06.10.2022.
 //
 
-import Foundation
+import UIKit
 
   // MARK: - Condition Enums
 
@@ -16,67 +16,59 @@ enum SelectedButtonCondition {
 enum ActiveTextField {
   case firstTextField, secondTextField
 }
-
-  // MARK: - View Protocol
-
-protocol ExchangeViewProtocol: AnyObject {
-  func presentIndicator(show: Bool)
-  func presentUpdatedViews(field: ActiveTextField)
-  func presentFailure(error: Error)
-}
-
+ 
   // MARK: - Presenter Protocol
-
-protocol ExchangeViewPresenterProtocol: AnyObject {
-  init(view: ExchangeViewProtocol,
-       networkService: NetworkServiceProtocol,
-       router: RouterProtocol?
-  )
-  var selectedButton: SelectedButtonCondition? { get set }
+ 
+protocol ExchangeViewPresenterProtocol {
   var activeField: ActiveTextField? { get set }
+  var selectedButton: SelectedButtonCondition? { get set }
   var exchangeModel: ExchangeCurrenciesData? { get set }
-  
+   
+  var amount: String? { get set }
+  var toCurrency: String? { get set }
   var fromCurrency: String? { get set }
-  var toCurrency: String? { get set } 
   var valueForFirstField: String? { get set }
   var valueForSecondField: String? { get set }
-  var amount: String? { get set }
   
-  func updateSelectedCurrency(currency: String)
   func clearValues()
   func swapCurrenciesButtons()
+  func setValues(with rate: String)
+  func selectNewCurrency(modal: Bool)
   func getValuesFromView(value: String)
-  func exchangeCurrencies(fromValue: String, toValue: String)
-  func setValues(rateForAmount: String)
-  func selectNewCurrency()
+  func setNavigationBarTitle() -> String
+  func showModalWithAllExchangedCurrencies()
+  func updateSelectedCurrency(_ currency: String)
+  func exchangeCurrenciesValues(fromValue: String, toValue: String)
 }
 
   // MARK: - Exchange Presenter
 
 final class ExchangePresenter: ExchangeViewPresenterProtocol {
-  let view: ExchangeViewProtocol?
-  let router: RouterProtocol?
+  weak var view: ExchangeViewProtocol!
+  let router: RouterProtocol!
   let networkService: NetworkServiceProtocol!
   var exchangeModel: ExchangeCurrenciesData?
    
   var selectedButton: SelectedButtonCondition?
   var activeField: ActiveTextField?
-  
+   
   var fromCurrency: String?
   var toCurrency: String?
   var valueForFirstField: String?
   var valueForSecondField: String?
   var amount: String?
-  
-  required init(view: ExchangeViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
+   
+  init(view: ExchangeViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
     self.view = view
     self.networkService = networkService
     self.router = router
   }
-   
-  func updateSelectedCurrency(currency: String) {
+    
+  // MARK: - Methods
+  
+  func updateSelectedCurrency(_ currency: String) {
     guard let selectedButton, let amount else { return }
-     
+    
     switch selectedButton {
     case .fromButton:
       fromCurrency = currency
@@ -88,12 +80,10 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     
     getValuesFromView(value: amount)
   }
-  
-  // MARK: - Methods
-  
+
   func swapCurrenciesButtons() {
-    swap(&fromCurrency, &toCurrency)
     guard let amount else { return }
+    swap(&fromCurrency, &toCurrency)
     getValuesFromView(value: amount)
   }
   
@@ -105,35 +95,34 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     
     switch activeField {
     case .firstTextField:
-      exchangeCurrencies(fromValue: fromCurrency, toValue: toCurrency)
+      exchangeCurrenciesValues(fromValue: fromCurrency, toValue: toCurrency)
     case .secondTextField:
-      exchangeCurrencies(fromValue: toCurrency, toValue: fromCurrency)
+      exchangeCurrenciesValues(fromValue: toCurrency, toValue: fromCurrency)
     }
   }
   
-  func exchangeCurrencies(fromValue: String, toValue: String) {
+  func exchangeCurrenciesValues(fromValue: String, toValue: String) {
     guard let amount else { return }
-    view?.presentIndicator(show: true)
+    view?.presentIndicator(isShow: true)
+    
     networkService.exchangeCurrencies(fromValue: fromValue, toValue: toValue, currentAmount: amount) { [weak self] result in
       guard let self else { return }
-      
-      DispatchQueue.main.async { /// After(deadline: .now() + 0.375)
-        switch result {
-        case .success(let model):
-          self.exchangeModel = model
-          guard let rateForAmount = model?.rates?.first?.value.rateForAmount else { return }
-          self.setValues(
-            rateForAmount: rateForAmount
-          )
-        case .failure(let error):
-          self.view?.presentFailure(error: error)
-        }
+       
+      switch result {
+      case .success(let model):
+        self.exchangeModel = model
+        guard let rateForAmount = model?.rates?.first?.value.rateForAmount else { return }
+        self.setValues(
+          with: rateForAmount
+        )
+      case .failure(let error):
+        self.view?.onFailure(error: error)
       }
     }
   }
    
-  func setValues(rateForAmount: String) {  
-    let rateForAmountAsDouble = Double(rateForAmount)
+  func setValues(with rate: String) {  
+    let rateForAmountAsDouble = Double(rate)
     
     guard let activeField else { return }
     switch activeField {
@@ -143,19 +132,31 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
       valueForFirstField = rateForAmountAsDouble?.fractionDigits(min: 2, max: 2, roundingMode: .halfEven) 
     }
     
-    view?.presentIndicator(show: false)
-    view?.presentUpdatedViews(field: activeField)
+    view?.presentIndicator(isShow: false)
+    view?.presentUpdatedViews(activeField)
   }
   
   func clearValues() {
     valueForFirstField = ""
     valueForSecondField = ""
     
-    view?.presentUpdatedViews(field: .firstTextField)
-    view?.presentUpdatedViews(field: .secondTextField)
+    view?.presentUpdatedViews(.firstTextField)
+    view?.presentUpdatedViews(.secondTextField)
+  }
+  
+  func setNavigationBarTitle() -> String {
+    if UIDevice.current.orientation.isLandscape {
+      return Constants.Titles.navigationItemEmptyBackButtonTitle
+    } else {
+      return Constants.Titles.navigationBarTitle
+    }
+  }
+  
+  func showModalWithAllExchangedCurrencies() {
+    router?.showAllExchangedCurrecniesList()
   }
     
-  func selectNewCurrency() {
-      router?.showCurrenciesList()
+  func selectNewCurrency(modal: Bool) {
+      router?.showCurrenciesList(isModal: modal)
   }
 }

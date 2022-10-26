@@ -7,63 +7,119 @@
 
 import Foundation
 
+typealias ExchangeCompletion = (Result<ExchangeCurrenciesData?, Error>) -> Void
+typealias GetCurrenciesListCompletion = (Result<CurrenciesListData?, Error>) -> Void
+
   // MARK: - Network Service Protocol
 
 protocol NetworkServiceProtocol {
-  typealias exchangeCompletion = (Result<ExchangeCurrenciesData?, Error>) -> Void
-  func getCurrenciesList(completion: @escaping (Result<CurrenciesListData?, Error>) -> Void)
-  func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion)
+   
+  func getCurrenciesList(completion: @escaping GetCurrenciesListCompletion)
+  func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping ExchangeCompletion)
+  func exchangeAllCurrencies(fromValue: String, toValue: String, completion: @escaping ExchangeCompletion)
 }
 
-// MARK: - Class Network Service
-
-class NetworkService: NetworkServiceProtocol {
+  // MARK: - Class Network Service
+ 
+final class NetworkService: NetworkServiceProtocol {
+   
+  private let session = URLSession.shared
   
-  typealias exchangeComplition = (Result<ExchangeCurrenciesData?, Error>) -> Void
+  // MARK: - Get Currencies List
   
   func getCurrenciesList(completion: @escaping (Result<CurrenciesListData?, Error>) -> Void) {
-    let request = NSMutableURLRequest(
-      url: NSURL(string: Constants.currenciesListUrl)! as URL,
-      cachePolicy: .useProtocolCachePolicy,
-      timeoutInterval: 5.0
-    )
-    request.httpMethod = "GET"
-    request.allHTTPHeaderFields = Constants.headers
-    URLSession.shared.dataTask(with: request as URLRequest) { (data, _, error) in
-      guard let data else { return }
-      if let error {
-        completion(.failure(error))
+    let request = getRequest(Constants.Api.currenciesListUrl)
+    
+    let completionOnMain: GetCurrenciesListCompletion = { result in
+      DispatchQueue.main.async {
+        completion(result)
       }
+    }
+    
+    session.dataTask(with: request as URLRequest) { (data, _, error) in
+         
+      if let error {
+        completionOnMain(.failure(error))
+      }
+      
+      guard let data else { return }
       do {
         let currenciesData = try JSONDecoder().decode(CurrenciesListData.self, from: data)
-        completion(.success(currenciesData))
+        completionOnMain(.success(currenciesData))
       } catch {
-        completion(.failure(error))
+        completionOnMain(.failure(error))
       }
     }.resume()
   }
   
-  func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping exchangeCompletion) { 
-    let url = "\(Constants.firstPartUrl)\(fromValue)&to=\(toValue)&amount=\(amount)&apiKey=\(Constants.apiKey)&format=json"
+  // MARK: - Exchange From/To Values
+  
+  func exchangeCurrencies(fromValue: String, toValue: String, currentAmount amount: String, completion: @escaping ExchangeCompletion) { 
+    let url = "\(Constants.Api.firstPartUrl)\(fromValue)&to=\(toValue)&amount=\(amount)&apiKey=\(Constants.Api.apiKey)&format=json"
+    let request = getRequest(url)
+    
+    let completionOnMain: ExchangeCompletion = { result in
+      DispatchQueue.main.async {
+        completion(result)
+      }
+    }
+    
+    session.dataTask(with: request as URLRequest) { (data, _, error) in
+      
+      if let error {
+        completionOnMain(.failure(error))
+      }
+       
+      guard let data else { return }
+      do {
+        let convertingRate = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
+        completionOnMain(.success(convertingRate))
+      } catch {
+        completionOnMain(.failure(error))
+      }
+    }.resume()
+  }
+  
+  // MARK: - Exchange All Currencies In List
+  
+  func exchangeAllCurrencies(fromValue: String, toValue: String, completion: @escaping ExchangeCompletion) {
+    let url = "\(Constants.Api.firstPartUrl)\(fromValue)&to=\(toValue)&amount=1&apiKey=\(Constants.Api.apiKey)&format=json"
+    let request = getRequest(url)
+    
+    let completionOnMain: ExchangeCompletion = { result in
+      DispatchQueue.main.async {
+        completion(result)
+      }
+    }
+    
+    session.dataTask(with: request as URLRequest) { (data, _, error) in
+      
+      if let error {
+        completionOnMain(.failure(error))
+      }
+      
+      guard let data else { return }
+      do {
+        let convertingRate = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
+        completionOnMain(.success(convertingRate))
+      } catch {
+        completionOnMain(.failure(error))
+      }
+    }.resume()
+  }
+  
+  // MARK: - Get Request
+  
+  private func getRequest(_ url: String) -> NSMutableURLRequest {
     let request = NSMutableURLRequest(
       url: NSURL(string: url)! as URL,
       cachePolicy: .useProtocolCachePolicy,
       timeoutInterval: 5.0
     )
-    request.httpMethod = "GET"
-    request.allHTTPHeaderFields = Constants.headers
- 
-    URLSession.shared.dataTask(with: request as URLRequest) { (data, _, error) in
-      guard let data else { return }
-      do {
-        let convertingRate = try JSONDecoder().decode(ExchangeCurrenciesData.self, from: data)
-        DispatchQueue.main.async {
-          completion(.success(convertingRate))
-        }
-      } catch let error { 
-        completion(.failure(error))
-      }
-    }.resume()
+    request.httpMethod = Constants.Api.httpMethod
+    request.allHTTPHeaderFields = Constants.Api.headers
+    
+    return request
   }
 }
  

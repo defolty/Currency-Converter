@@ -7,42 +7,34 @@
 
 import Foundation
 
-  // MARK: - View Protocol
-
-protocol CurrenciesListViewProtocol: AnyObject {
-  func presentSuccess()
-  func presentFailure(error: Error)
-}
-
   // MARK: - Presenter Protocol
 
-protocol CurrenciesListViewPresenterProtocol: AnyObject {
-  init(view: CurrenciesListViewProtocol,
-       networkService: NetworkServiceProtocol,
-       router: RouterProtocol?
-  )
+protocol CurrenciesListViewPresenterProtocol {
+   
   var currenciesList: [String]? { get set }
   var filteredList: [String]? { get set }
   var isFiltered: Bool { get set }
-  
+   
   func getCurrenciesList()
   func numberOfRows() -> Int
-  func filterList(text: String, state: Bool)
-  func popToRoot()
+   
+  func filterList(by text: String, state: Bool)
+  func popToRootViewController()
 }
 
   // MARK: - Currencies List Presenter
 
 final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
-  weak var view: CurrenciesListViewProtocol?
-  let networkService: NetworkServiceProtocol!
-  var router: RouterProtocol?
+   
+  weak var view: CurrenciesListViewProtocol!
+  private let networkService: NetworkServiceProtocol!
+  private var router: RouterProtocol!
   
   var currenciesList: [String]?
   var filteredList: [String]?
   var isFiltered = false
-  
-  required init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
+   
+  init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
     self.view = view
     self.networkService = networkService
     self.router = router
@@ -52,36 +44,31 @@ final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
   // MARK: - Methods
   
   func numberOfRows() -> Int {
-    if isFiltered {
-      return filteredList?.count ?? 0
-    } else {
-      return currenciesList?.count ?? 0
-    }
+    isFiltered ? filteredList?.count ?? 0 : currenciesList?.count ?? 0
   }
   
-  func filterList(text: String, state: Bool) {
+  func filterList(by text: String, state: Bool) {
     isFiltered = state
     guard let currenciesList else { return }
     filteredList = currenciesList.filter { $0.lowercased().contains(text.lowercased()) }
   }
-   
+  
   func getCurrenciesList() {
     networkService.getCurrenciesList { [weak self] result in
       guard let self else { return }
-      DispatchQueue.main.async {
-        switch result {
-        case .success(let list):
-          self.currenciesList = list?.currencies.map{ $0.key }.sorted()
-          self.view?.presentSuccess()
-        case .failure(let error):
-          self.view?.presentFailure(error: error)
-        }
+      
+      switch result {
+      case .success(let list):
+        self.currenciesList = list?.currencies.map{ $0.key }.sorted()
+        self.view?.onSuccess()
+      case .failure(let error):
+        self.view?.onFailure(error: error)
       }
     }
   }
   
-  func popToRoot() {
-    router?.popToRoot()
+  func popToRootViewController() {
+    router?.popToRootViewController()
   }
 } 
 

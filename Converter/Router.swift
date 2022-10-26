@@ -6,55 +6,65 @@
 //
 
 import UIKit
-
-protocol RouterMain {
-  var navigationController: UINavigationController? { get set }
-  var assemblyBuilder: AssemblyBuilderProtocol? { get set }
-}
-
-protocol RouterProtocol: RouterMain {
+ 
+protocol RouterProtocol {
   func initialViewController()
-  func showCurrenciesList()
-  func popToRoot()
+  func showCurrenciesList(isModal: Bool)
+  func showAllExchangedCurrecniesList()
+  func popToRootViewController()
 }
-
-class Router: RouterProtocol {
-  
-  var navigationController: UINavigationController?
-  var assemblyBuilder: AssemblyBuilderProtocol?
+ 
+final class Router: RouterProtocol {
+   
+  var navigationController: UINavigationController!
+  var assemblyBuilder: AssemblyBuilderProtocol!
+   
   var exchangeScreenView: ExchangeViewController?
-  var currenciesListView: CurrenciesListViewController?
+  weak var currenciesListView: CurrenciesListViewController?
+  weak var allExchangedCurrencyView: AllExchangedCurrenciesViewController?
   
   init(navigationController: UINavigationController?, assemblyBuilder: AssemblyBuilderProtocol) {
     self.navigationController = navigationController
     self.assemblyBuilder = assemblyBuilder
   }
   
-  func initialViewController() { 
-    if let navigationController {
-      guard let exchangeVC = assemblyBuilder?.createExchangeModule(router: self) else { return }
-      exchangeScreenView = exchangeVC
-      navigationController.viewControllers = [exchangeVC]
+  func initialViewController() {
+    let exchangeVC = assemblyBuilder.createExchangeModule(with: self)
+    exchangeScreenView = exchangeVC
+    navigationController.viewControllers = [exchangeVC]
+  }
+  
+  func showCurrenciesList(isModal: Bool) {
+    let currenciesVC = assemblyBuilder.createCurrenciesListModule(with: self)
+    currenciesListView = currenciesVC
+    
+    guard let currenciesListView else { return }
+    currenciesListView.exchangeViewDelegate = exchangeScreenView
+    navigationController.pushViewController(currenciesVC, animated: true)
+  }
+  
+  func showAllExchangedCurrecniesList() {
+    let allExchangedCurrencyVC = assemblyBuilder.createExchangedAllCurrencies(with: self)
+    allExchangedCurrencyView = allExchangedCurrencyVC
+    
+    guard let exchangeScreenView else { return }
+    exchangeScreenView.baseCurrencyDelegate = allExchangedCurrencyView
+    let targetVC = UINavigationController(rootViewController: allExchangedCurrencyVC)
+    
+    if #available(iOS 15.0, *) {
+      if let sheet = targetVC.sheetPresentationController {
+        sheet.detents = [.medium(), .large()]
+        sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+        sheet.prefersGrabberVisible = true
+        sheet.prefersEdgeAttachedInCompactHeight = true
+        ///sheet.largestUndimmedDetentIdentifier = .medium
+        ///sheet.preferredCornerRadius = 50
+      }
+      navigationController.present(targetVC, animated: true)
     }
   }
   
-  func showCurrenciesList() { 
-    if let navigationController {
-      guard let currenciesVC = assemblyBuilder?.createCurrenciesListModule(router: self) else { return }
-      currenciesListView = currenciesVC
-      guard let currenciesListView else { return }
-      currenciesListView.sendCurrencyDelegate = exchangeScreenView
-      navigationController.pushViewController(currenciesVC, animated: true)
-      
-      ///# for `modal view`
-      ///# let targetVC = UINavigationController(rootViewController: currenciesVC)
-      ///# navigationController.present(targetVC, animated: true)
-    }
-  }
-   
-  func popToRoot() {
-    if let navigationController {
-      navigationController.popToRootViewController(animated: true)
-    }
+  func popToRootViewController() {
+    navigationController.popToRootViewController(animated: true)
   }
 } 

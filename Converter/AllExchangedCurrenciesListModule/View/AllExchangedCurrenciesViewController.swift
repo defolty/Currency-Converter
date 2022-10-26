@@ -1,28 +1,28 @@
 //
-//  CurrenciesListViewController.swift
+//  AllExchangedCurrenciesViewController.swift
 //  Converter
 //
-//  Created by Nikita Nesporov on 08.10.2022.
+//  Created by Nikita Nesporov on 21.10.2022.
 //
 
 import UIKit
  
-  // MARK: - Extension Delegate Send Selected Currency
- 
-protocol ExchangeViewDelegate: AnyObject {
-  func sendSelectedCurrency(_ currency: String)
-}
-
   // MARK: - View Protocol
-
-protocol CurrenciesListViewProtocol: AnyObject {
+ 
+protocol AllExchangedCurrenciesViewProtocol: AnyObject {
   func onSuccess()
   func onFailure(error: Error)
 }
 
-  // MARK: - Class Currencies List ViewController
- 
-final class CurrenciesListViewController: UIViewController {
+  // MARK: - Send Initial Currency From View
+
+protocol AllExchangedViewDelegate: AnyObject {
+  func sendBaseCurrency(_ currency: String)
+}
+
+  // MARK: - Class Exchange All Currencies ViewController
+
+final class AllExchangedCurrenciesViewController: UIViewController {
   
   // MARK: - Properties
   
@@ -30,15 +30,21 @@ final class CurrenciesListViewController: UIViewController {
   private var safeArea: UILayoutGuide!
   private let searchController = UISearchController(searchResultsController: nil)
   
-  weak var exchangeViewDelegate: ExchangeViewDelegate?
-  var presenter: CurrenciesListViewPresenterProtocol!
-   
+  var presenter: AllExchangedCurrenciesPresenterProtocol!
+  
   private var isFiltering: Bool {
     searchController.isActive && !isSearchBarEmpty
   }
-   
+  
   private var isSearchBarEmpty: Bool {
     searchController.searchBar.text?.isEmpty ?? true
+  }
+  
+  var fromCurrencyDidAccept: String? {
+    didSet {
+      presenter.fromCurrency = fromCurrencyDidAccept
+      presenter.getCurrenciesList()
+    }
   }
   
   // MARK: - Life Cycle
@@ -58,14 +64,15 @@ final class CurrenciesListViewController: UIViewController {
     setupNavigationBar()
     setupSearchController()
   }
-  
+   
   private func setupTableView() {
     safeArea = view.layoutMarginsGuide
     view.addSubview(tableView)
-    tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Identifiers.currenciesListCellID)
-    tableView.delegate = self
+    tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Identifiers.allExchangedCurrenciesListCellID)
     tableView.dataSource = self
+    tableView.allowsSelection = false
     tableView.translatesAutoresizingMaskIntoConstraints = false
+    
   }
   
   private func setupConstraints() {
@@ -78,8 +85,7 @@ final class CurrenciesListViewController: UIViewController {
   }
   
   private func setupNavigationBar() {
-    title = Constants.Titles.currenciesListNavBarTitle
-    navigationController?.view.backgroundColor = .systemBackground
+    title = presenter.getNavigationBarTitle()
   }
   
   private func setupSearchController() {
@@ -92,73 +98,64 @@ final class CurrenciesListViewController: UIViewController {
     definesPresentationContext = true
   }
 }
- 
- // MARK: - Extension CurrenciesListViewProtocol
 
-extension CurrenciesListViewController: CurrenciesListViewProtocol {
+  // MARK: - Extension Exchanged View Delegate
+
+extension AllExchangedCurrenciesViewController: AllExchangedViewDelegate {
+  func sendBaseCurrency(_ currency: String) {
+    fromCurrencyDidAccept = currency
+  }
+}
+ 
+  // MARK: - All Exchanged CurrenciesView Protocol
   
+extension AllExchangedCurrenciesViewController: AllExchangedCurrenciesViewProtocol {
   func onSuccess() {
     tableView.reloadData()
   }
   
   func onFailure(error: Error) {
-    showAlert(
+    self.showAlert(
       withTitle: Constants.Errors.errorTitle,
       withMessage: error.localizedDescription
     )
   }
 }
 
- // MARK: - Extension UISearchController
+  // MARK: - Extension Search Controller
 
-extension CurrenciesListViewController: UISearchResultsUpdating {
- func updateSearchResults(for searchController: UISearchController) {
-   let searchBar = searchController.searchBar
-   filterContentForSearchText(searchBar.text ?? "")
- }
+extension AllExchangedCurrenciesViewController: UISearchResultsUpdating {
+  func updateSearchResults(for searchController: UISearchController) {
+    let searchBar = searchController.searchBar
+    filterContentForSearchText(searchBar.text ?? "")
+  }
   
   private func filterContentForSearchText(_ searchText: String) {
-    presenter.filterList(by: searchText, state: isFiltering)
+    presenter.filterList(text: searchText, state: isFiltering)
     tableView.reloadData()
   }
 }
 
-// MARK: - TableView Data Source
+  // MARK: - TableView Data Source
  
-extension CurrenciesListViewController: UITableViewDataSource {
-  
- func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-   presenter.numberOfRows()
- }
-  
+extension AllExchangedCurrenciesViewController: UITableViewDataSource {
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return presenter.numberOfRows()
+  }
+   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(
-      withIdentifier: Constants.Identifiers.currenciesListCellID,
+      withIdentifier: Constants.Identifiers.allExchangedCurrenciesListCellID,
       for: indexPath
     )
     cell.textLabel?.textAlignment = .center
-    
+    cell.textLabel?.adjustsFontSizeToFitWidth = true
+     
     cell.textLabel?.text = isFiltering
     ? presenter.filteredList?[indexPath.row]
-    : presenter.currenciesList?[indexPath.row]
-    
+    : presenter.getCellText(indexPath: indexPath)
+     
     return cell
   }
 }
-
- // MARK: - TableView Delegate
-
-extension CurrenciesListViewController: UITableViewDelegate {
   
-  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    let currentCurrency: String
-    
-    currentCurrency = isFiltering
-    ? presenter.filteredList?[indexPath.row] ?? "n/a"
-    : presenter.currenciesList?[indexPath.row] ?? "n/a"
-    
-    exchangeViewDelegate?.sendSelectedCurrency(currentCurrency)
-    presenter.popToRootViewController()
-  }
-}
-

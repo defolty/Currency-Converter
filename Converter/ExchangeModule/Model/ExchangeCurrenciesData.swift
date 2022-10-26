@@ -4,11 +4,11 @@
 //
 //  Created by Nikita Nesporov on 20.12.2021.
 //
- 
-struct ExchangeCurrenciesData: Codable {
-  var baseCurrencyName, updatedDate, status: String
-  var baseCurrencyCode, amount: String
-  var rates: [String: Rates]?
+  
+struct ExchangeCurrenciesData: Decodable {
+  let baseCurrencyName, updatedDate, status: String
+  let baseCurrencyCode, amount: String
+  let rates: [String: Rates]?
   
   enum CodingKeys: String, CodingKey {
     case status, amount, rates
@@ -17,11 +17,11 @@ struct ExchangeCurrenciesData: Codable {
     case updatedDate = "updated_date"
   }
 }
-
-struct Rates: Codable {
-  var currencyName: String?
-  var rate: String?
-  var rateForAmount: String?
+ 
+struct Rates: Decodable { 
+  let currencyName: String?
+  let rate: String?
+  let rateForAmount: String?
   
   enum CodingKeys: String, CodingKey {
     case rate

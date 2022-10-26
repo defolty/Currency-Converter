@@ -8,12 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		35BCBF7894CA01B005DF1393 /* Pods_Converter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A64B2FE1A919B3A7236B573 /* Pods_Converter.framework */; };
+		FB344EEC290303B0007C824B /* AllExchangedCurrenciesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB344EEB290303B0007C824B /* AllExchangedCurrenciesViewController.swift */; };
+		FB344EEE290303F7007C824B /* AllExchangedCurrenciesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB344EED290303F7007C824B /* AllExchangedCurrenciesPresenter.swift */; };
 		FB62EED4276BCE0C00BDB70D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB62EED3276BCE0C00BDB70D /* Assets.xcassets */; };
 		FB62EED7276BCE0C00BDB70D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB62EED5276BCE0C00BDB70D /* LaunchScreen.storyboard */; };
 		FB6ECC30290165020038171A /* UIViewController+UIAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6ECC2F290165020038171A /* UIViewController+UIAlert.swift */; };
 		FB6ECC32290165400038171A /* String+CurrencyInputFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6ECC31290165400038171A /* String+CurrencyInputFormatting.swift */; };
 		FB6ECC35290165AD0038171A /* CurrenciesListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6ECC34290165AD0038171A /* CurrenciesListData.swift */; };
+		FB6ECC4229029BC10038171A /* UITextField+Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6ECC4129029BC10038171A /* UITextField+Padding.swift */; };
 		FB834E852770F26900105999 /* ExchangeCurrenciesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB834E842770F26900105999 /* ExchangeCurrenciesData.swift */; };
+		FB9005E42909974B00520D4B /* UIViewController+KeyboardObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9005E32909974B00520D4B /* UIViewController+KeyboardObserver.swift */; };
+		FB9005E6290999EB00520D4B /* UIResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9005E5290999EB00520D4B /* UIResponder.swift */; };
 		FBAB0EE128F17E5700E242DE /* CurrenciesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EE028F17E5700E242DE /* CurrenciesListViewController.swift */; };
 		FBAB0EE328F17E7400E242DE /* CurrenciesListViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EE228F17E7400E242DE /* CurrenciesListViewPresenter.swift */; };
 		FBAB0EE828F1873900E242DE /* AssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EE728F1873900E242DE /* AssemblyBuilder.swift */; };
@@ -33,6 +38,8 @@
 		1A64B2FE1A919B3A7236B573 /* Pods_Converter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Converter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B828B649444A7CC3E0B21DE7 /* Pods-Converter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Converter.debug.xcconfig"; path = "Target Support Files/Pods-Converter/Pods-Converter.debug.xcconfig"; sourceTree = "<group>"; };
 		E15BF827869FDD4D7044C54F /* Pods-Converter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Converter.release.xcconfig"; path = "Target Support Files/Pods-Converter/Pods-Converter.release.xcconfig"; sourceTree = "<group>"; };
+		FB344EEB290303B0007C824B /* AllExchangedCurrenciesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllExchangedCurrenciesViewController.swift; sourceTree = "<group>"; };
+		FB344EED290303F7007C824B /* AllExchangedCurrenciesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllExchangedCurrenciesPresenter.swift; sourceTree = "<group>"; };
 		FB62EEC7276BCE0C00BDB70D /* Converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Converter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB62EED3276BCE0C00BDB70D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB62EED6276BCE0C00BDB70D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -40,7 +47,10 @@
 		FB6ECC2F290165020038171A /* UIViewController+UIAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+UIAlert.swift"; sourceTree = "<group>"; };
 		FB6ECC31290165400038171A /* String+CurrencyInputFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+CurrencyInputFormatting.swift"; sourceTree = "<group>"; };
 		FB6ECC34290165AD0038171A /* CurrenciesListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesListData.swift; sourceTree = "<group>"; };
+		FB6ECC4129029BC10038171A /* UITextField+Padding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Padding.swift"; sourceTree = "<group>"; };
 		FB834E842770F26900105999 /* ExchangeCurrenciesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeCurrenciesData.swift; sourceTree = "<group>"; };
+		FB9005E32909974B00520D4B /* UIViewController+KeyboardObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KeyboardObserver.swift"; sourceTree = "<group>"; };
+		FB9005E5290999EB00520D4B /* UIResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIResponder.swift; sourceTree = "<group>"; };
 		FBAB0EE028F17E5700E242DE /* CurrenciesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesListViewController.swift; sourceTree = "<group>"; };
 		FBAB0EE228F17E7400E242DE /* CurrenciesListViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesListViewPresenter.swift; sourceTree = "<group>"; };
 		FBAB0EE728F1873900E242DE /* AssemblyBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssemblyBuilder.swift; sourceTree = "<group>"; };
@@ -113,6 +123,7 @@
 				FBAB0EDE28F17CFA00E242DE /* Services */,
 				FBAB0EDF28F17DC700E242DE /* ExchangeModule */,
 				FBAB0EE428F17E7E00E242DE /* CurrenciesListModule */,
+				FB6ECC482902AA080038171A /* AllExchangedCurrenciesListModule */,
 				FBAB0EE728F1873900E242DE /* AssemblyBuilder.swift */,
 				FBAB0EE928F1875F00E242DE /* Router.swift */,
 			);
@@ -134,6 +145,9 @@
 				FBDAA3AD2798BD6500CB89B7 /* FloatingPoint+NumberFormatter.swift */,
 				FB6ECC2F290165020038171A /* UIViewController+UIAlert.swift */,
 				FB6ECC31290165400038171A /* String+CurrencyInputFormatting.swift */,
+				FB6ECC4129029BC10038171A /* UITextField+Padding.swift */,
+				FB9005E32909974B00520D4B /* UIViewController+KeyboardObserver.swift */,
+				FB9005E5290999EB00520D4B /* UIResponder.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -144,6 +158,31 @@
 				FB6ECC34290165AD0038171A /* CurrenciesListData.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		FB6ECC482902AA080038171A /* AllExchangedCurrenciesListModule */ = {
+			isa = PBXGroup;
+			children = (
+				FB6ECC4B2902AB9A0038171A /* Presenter */,
+				FB6ECC4C2902ABA10038171A /* View */,
+			);
+			path = AllExchangedCurrenciesListModule;
+			sourceTree = "<group>";
+		};
+		FB6ECC4B2902AB9A0038171A /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				FB344EED290303F7007C824B /* AllExchangedCurrenciesPresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
+		FB6ECC4C2902ABA10038171A /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FB344EEB290303B0007C824B /* AllExchangedCurrenciesViewController.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		FBAB0EDE28F17CFA00E242DE /* Services */ = {
@@ -365,12 +404,17 @@
 				FBAB0EEA28F1875F00E242DE /* Router.swift in Sources */,
 				FB6ECC35290165AD0038171A /* CurrenciesListData.swift in Sources */,
 				FBAB0EE828F1873900E242DE /* AssemblyBuilder.swift in Sources */,
+				FB9005E6290999EB00520D4B /* UIResponder.swift in Sources */,
 				FB6ECC32290165400038171A /* String+CurrencyInputFormatting.swift in Sources */,
 				FBAB0EE328F17E7400E242DE /* CurrenciesListViewPresenter.swift in Sources */,
+				FB344EEE290303F7007C824B /* AllExchangedCurrenciesPresenter.swift in Sources */,
 				FBAB0EF228F7249C00E242DE /* AppDelegate.swift in Sources */,
 				FBDAA3AE2798BD6500CB89B7 /* FloatingPoint+NumberFormatter.swift in Sources */,
+				FB6ECC4229029BC10038171A /* UITextField+Padding.swift in Sources */,
 				FBEAD4B427723A8900DDD50E /* Indicator.swift in Sources */,
 				FBFF2A6728EE1BBD00D3FCBF /* ExchangePresenter.swift in Sources */,
+				FB9005E42909974B00520D4B /* UIViewController+KeyboardObserver.swift in Sources */,
+				FB344EEC290303B0007C824B /* AllExchangedCurrenciesViewController.swift in Sources */,
 				FB6ECC30290165020038171A /* UIViewController+UIAlert.swift in Sources */,
 				FBC7781228EDF3E000C9FB1D /* LivePreview.swift in Sources */,
 				FBEA9C40276E7346004BF24C /* Constants.swift in Sources */,

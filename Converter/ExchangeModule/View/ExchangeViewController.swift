@@ -6,13 +6,14 @@
 //
 
 import UIKit
-  
+ 
   // MARK: - View Protocol
 
 protocol ExchangeViewProtocol: AnyObject {
   func presentIndicator(isShow: Bool)
   func presentUpdatedViews(_ field: ActiveTextField)
   func onFailure(error: Error)
+  var onShowButtonAction: (() -> Void)? { get set }
 }
  
   // MARK: - Class Exchange ViewController
@@ -24,11 +25,21 @@ final class ExchangeViewController: UIViewController {
   var presenter: ExchangeViewPresenterProtocol!
   weak var baseCurrencyDelegate: AllExchangedViewDelegate?
   private let activityIndicator = ActivityIndicator()
-   
+  
   private var scrollOffset : CGFloat = 0
   private var distance : CGFloat = 0
   private var currencyDidSelected: String?
-   
+  
+  var onShowButtonAction: (() -> Void)?
+  var resetConstraintsIfNeeded: Bool = false {
+    didSet {
+      
+      animateView(view: showAllExchangedCurrenciesList, hidden: false)
+      
+      setupConstaints(0.3)
+    }
+  }
+  
   // MARK: - UI Elements
   
   private let scrollView: UIScrollView = {
@@ -47,6 +58,21 @@ final class ExchangeViewController: UIViewController {
     return view
   }()
   
+  private lazy var middleView: UIView = {
+    let view = UIView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.backgroundColor = .clear
+    view.setContentHuggingPriority(.required, for: .vertical)
+    return view
+  }()
+  
+  private lazy var centralView: UIView = {
+    let view = UIView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.backgroundColor = .clear
+    return view
+  }()
+  
   private lazy var firstCurrencyTextField: UITextField = {
     let textField = UITextField()
     textField.placeholder = Constants.Titles.firstCurrencyTextFieldPlaceholder
@@ -59,7 +85,7 @@ final class ExchangeViewController: UIViewController {
     textField.placeholder = Constants.Titles.secondCurrencyTextFieldPlaceholder
     return textField
   }()
-   
+  
   private lazy var fromCurrencySelectionButton: UIButton = {
     let button = UIButton(type: .system)
     button.setTitle(Constants.InitialValues.fromCurrencySelectionButtonInitialValue, for: .normal)
@@ -71,7 +97,7 @@ final class ExchangeViewController: UIViewController {
     button.setTitle(Constants.InitialValues.toCurrencySelectionButtonInitialValue, for: .normal)
     return button
   }()
-   
+  
   private lazy var showAllExchangedCurrenciesList: UIButton = {
     let button = UIButton(type: .system)
     button.setTitle(Constants.Titles.showAllExchangedCurrenciesListTitle, for: .normal)
@@ -84,12 +110,12 @@ final class ExchangeViewController: UIViewController {
     button.isHidden = true
     return button
   }()
-   
+  
   // MARK: - Life Cycle
   
   override func viewDidLoad() {
     super.viewDidLoad()
-     
+    
     setup()
   }
   
@@ -101,7 +127,7 @@ final class ExchangeViewController: UIViewController {
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-     
+    
     addKeyboardObserver()
     passDataToPresenters()
   }
@@ -109,18 +135,20 @@ final class ExchangeViewController: UIViewController {
   override func viewWillDisappear(_ animated: Bool) {
     removeKeyboardObserver()
   }
-    
+  
   // MARK: - Setup Views
   
   private func addSubviews() {
     view.addSubview(scrollView)
     scrollView.addSubview(contentView)
-    contentView.addSubview(activityIndicator)
-    contentView.addSubview(firstCurrencyTextField)
-    contentView.addSubview(secondCurrencyTextField)
-    contentView.addSubview(fromCurrencySelectionButton)
-    contentView.addSubview(swapButtons)
-    contentView.addSubview(toCurrencySelectionButton)
+    contentView.addSubview(middleView)
+    middleView.addSubview(centralView)
+    centralView.addSubview(activityIndicator)
+    middleView.addSubview(firstCurrencyTextField)
+    middleView.addSubview(secondCurrencyTextField)
+    middleView.addSubview(fromCurrencySelectionButton)
+    middleView.addSubview(swapButtons)
+    middleView.addSubview(toCurrencySelectionButton)
     contentView.addSubview(showAllExchangedCurrenciesList)
   }
   
@@ -183,7 +211,7 @@ final class ExchangeViewController: UIViewController {
       for: .touchUpInside
     )
   }
-   
+  
   private func initialValues() {
     presenter.activeField = .firstTextField
     presenter.selectedButton = .fromButton
@@ -193,7 +221,7 @@ final class ExchangeViewController: UIViewController {
     presenter.valueForFirstField = Constants.InitialValues.firstCurrencyTextFieldInitialValue
     presenter.getValuesFromView(value: Constants.InitialValues.firstCurrencyTextFieldInitialValue)
   }
-   
+  
   private func setup() {
     view.backgroundColor = .systemBackground
     scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -203,75 +231,126 @@ final class ExchangeViewController: UIViewController {
     configureSwapButton()
     configureSelectionButtons()
     setupNavigationBar()
-    setupConstaints()
-    initialValues()
+    setupConstaints(0.0)
     hideKeyboardWhenTappedAround()
+    initialValues()
   }
-   
-  // MARK: - Setup Constraint's
   
-  private func setupConstaints() {
+  // MARK: - Setup Constraints
+  
+  private func setupConstaints(_ duration: Double) {
     
     let contentViewHeight = contentView.heightAnchor.constraint(equalTo: view.heightAnchor)
     contentViewHeight.priority = UILayoutPriority(250)
     
-    NSLayoutConstraint.activate([
+    let scrollViewConstraints = [
       scrollView.topAnchor.constraint(equalTo: view.topAnchor),
       scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
-      scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
-      scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-    ])
-      
-    NSLayoutConstraint.activate([
+      scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      scrollView.rightAnchor.constraint(equalTo: view.rightAnchor)
+    ]
+    
+    let contentViewConstraints = [
       contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-      contentView.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
+      contentView.leftAnchor.constraint(equalTo: view.leftAnchor),
       contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-      contentView.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
+      contentView.rightAnchor.constraint(equalTo: view.rightAnchor),
       contentView.widthAnchor.constraint(equalTo: view.widthAnchor),
       contentViewHeight
-    ])
-      
-    NSLayoutConstraint.activate([
-      fromCurrencySelectionButton.widthAnchor.constraint(equalToConstant: 80),
-      fromCurrencySelectionButton.heightAnchor.constraint(equalToConstant: 80),
-      fromCurrencySelectionButton.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 50),
+    ]
+    
+    let middleViewConstraints = [
+      middleView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+      middleView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
+      middleView.heightAnchor.constraint(equalTo: middleView.widthAnchor),
+      middleView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+      middleView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+    ]
+    
+    let centralViewConstraints = [
+      centralView.heightAnchor.constraint(equalToConstant: 10),
+      centralView.widthAnchor.constraint(equalToConstant: 10),
+      centralView.centerYAnchor.constraint(equalTo: middleView.centerYAnchor),
+      centralView.centerXAnchor.constraint(equalTo: middleView.centerXAnchor)
+    ]
+    
+    let fromButtonConstraints = [
+      fromCurrencySelectionButton.topAnchor.constraint(equalTo: middleView.topAnchor, constant: 50),
+      fromCurrencySelectionButton.leftAnchor.constraint(equalTo: middleView.leftAnchor),
       fromCurrencySelectionButton.bottomAnchor.constraint(equalTo: swapButtons.topAnchor, constant: -5),
-    ])
-     
-    NSLayoutConstraint.activate([
+      fromCurrencySelectionButton.heightAnchor.constraint(equalTo: fromCurrencySelectionButton.widthAnchor)
+    ]
+    
+    let swapButtonConstraints = [
       swapButtons.widthAnchor.constraint(equalToConstant: 40),
       swapButtons.heightAnchor.constraint(equalToConstant: 40),
       swapButtons.centerXAnchor.constraint(equalTo: fromCurrencySelectionButton.centerXAnchor),
-      swapButtons.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
-    ])
-       
-    NSLayoutConstraint.activate([
+      swapButtons.centerYAnchor.constraint(equalTo: centralView.centerYAnchor)
+    ]
+    
+    let firstTextFieldConstraints = [
       firstCurrencyTextField.leftAnchor.constraint(equalTo: fromCurrencySelectionButton.rightAnchor, constant: 10),
-      firstCurrencyTextField.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+      firstCurrencyTextField.rightAnchor.constraint(equalTo: middleView.rightAnchor),
       firstCurrencyTextField.heightAnchor.constraint(equalTo: fromCurrencySelectionButton.heightAnchor),
       firstCurrencyTextField.centerYAnchor.constraint(equalTo: fromCurrencySelectionButton.centerYAnchor)
-    ])
-      
-    NSLayoutConstraint.activate([
-      showAllExchangedCurrenciesList.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 50),
-      showAllExchangedCurrenciesList.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
-      showAllExchangedCurrenciesList.topAnchor.constraint(equalTo: secondCurrencyTextField.bottomAnchor, constant: 40),
-      showAllExchangedCurrenciesList.heightAnchor.constraint(equalToConstant: 40)
-    ])
-      
-    NSLayoutConstraint.activate([
+    ]
+    
+    let toButtonConstraints = [
+      toCurrencySelectionButton.topAnchor.constraint(equalTo: swapButtons.bottomAnchor, constant: 5),
       toCurrencySelectionButton.widthAnchor.constraint(equalTo: fromCurrencySelectionButton.widthAnchor),
       toCurrencySelectionButton.heightAnchor.constraint(equalTo: fromCurrencySelectionButton.heightAnchor),
-      toCurrencySelectionButton.centerXAnchor.constraint(equalTo: fromCurrencySelectionButton.centerXAnchor),
-      toCurrencySelectionButton.topAnchor.constraint(equalTo: swapButtons.bottomAnchor, constant: 5)
-    ])
-      
-    NSLayoutConstraint.activate([
+      toCurrencySelectionButton.centerXAnchor.constraint(equalTo: fromCurrencySelectionButton.centerXAnchor)
+    ]
+    
+    let secondTextFieldConstraints = [
       secondCurrencyTextField.centerXAnchor.constraint(equalTo: firstCurrencyTextField.centerXAnchor),
       secondCurrencyTextField.centerYAnchor.constraint(equalTo: toCurrencySelectionButton.centerYAnchor),
       secondCurrencyTextField.widthAnchor.constraint(equalTo: firstCurrencyTextField.widthAnchor),
       secondCurrencyTextField.heightAnchor.constraint(equalTo: firstCurrencyTextField.heightAnchor)
-    ])
+    ]
+    
+    let showAllCurrenciesModalConstraints = [
+      showAllExchangedCurrenciesList.topAnchor.constraint(equalTo: middleView.bottomAnchor, constant: 10),
+      showAllExchangedCurrenciesList.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 50),
+      showAllExchangedCurrenciesList.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50),
+      showAllExchangedCurrenciesList.heightAnchor.constraint(equalToConstant: 60)
+    ]
+    
+    view.clearConstraints()
+    
+    NSLayoutConstraint.activate(scrollViewConstraints)
+    NSLayoutConstraint.activate(contentViewConstraints)
+    NSLayoutConstraint.activate(middleViewConstraints)
+    NSLayoutConstraint.activate(centralViewConstraints)
+    NSLayoutConstraint.activate(fromButtonConstraints)
+    NSLayoutConstraint.activate(swapButtonConstraints)
+    NSLayoutConstraint.activate(firstTextFieldConstraints)
+    NSLayoutConstraint.activate(toButtonConstraints)
+    NSLayoutConstraint.activate(secondTextFieldConstraints)
+    NSLayoutConstraint.activate(showAllCurrenciesModalConstraints)
+    
+    UIView.animate(withDuration: duration) {
+      self.view.layoutIfNeeded()
+    }
+  }
+  
+  private func changeMiddleViewFrame() {
+    let screen = UIScreen.main.bounds.size.height / 2.7
+    
+    let constraintsWithPresentedModalView = [
+      middleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 80),
+      middleView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 5),
+      middleView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -5),
+      middleView.heightAnchor.constraint(equalToConstant: screen)
+    ]
+    
+    animateView(view: showAllExchangedCurrenciesList, hidden: true)
+    
+    NSLayoutConstraint.activate(constraintsWithPresentedModalView)
+    
+    UIView.animate(withDuration: 0.3) {
+      self.view.layoutIfNeeded()
+    }
   }
   
   // MARK: - Actions
@@ -281,21 +360,23 @@ final class ExchangeViewController: UIViewController {
       presenter.updateSelectedCurrency(currencyDidSelected)
       
       if presenter.selectedButton == .fromButton {
-        showAllExchangedCurrenciesList.isHidden = false
+        animateView(view: showAllExchangedCurrenciesList, hidden: false)
         baseCurrencyDelegate?.sendBaseCurrency(currencyDidSelected)
       }
     }
   }
-      
+  
   @objc
   private func showAllExchangedCurrencies() {
     if presenter.selectedButton == .fromButton {
       guard let currencyDidSelected else { return }
+      changeMiddleViewFrame()
       presenter.showModalWithAllExchangedCurrencies()
+      onShowButtonAction?()
       baseCurrencyDelegate?.sendBaseCurrency(currencyDidSelected)
     }
   }
-   
+  
   @objc
   private func selectCurrency(_ sender: UIButton) {
     let selectedButton: SelectedButtonCondition = sender ==
@@ -307,25 +388,32 @@ final class ExchangeViewController: UIViewController {
     case .toButton:
       presenter.selectedButton = .toButton
     }
-    presenter.selectNewCurrency(modal: false)
+    
+    presenter.selectNewCurrency()
   }
   
   @objc
   private func swapCurrencies() {
     presenter.swapCurrenciesButtons()
   }
-   
+  
   @objc
   private func textFieldsDidEditing(_ textField: UITextField) {
     let activeField: ActiveTextField = textField == firstCurrencyTextField
     ? .firstTextField
     : .secondTextField
     presenter.activeField = activeField
-     
+    
     if let amountString = textField.text?.currencyInputFormatting() {
       textField.text = amountString
       presenter.getValuesFromView(value: amountString)
     }
+  }
+  
+  private func animateView(view: UIView, hidden: Bool) {
+    UIView.transition(with: view, duration: 0.5, options: .transitionCrossDissolve, animations: {
+      view.isHidden = hidden
+    })
   }
 }
 
@@ -401,7 +489,7 @@ extension ExchangeViewController: ExchangeViewDelegate {
    currencyDidSelected = currency
  }
 }
-   
+ 
 // MARK: - Live Preview
 
 //#if DEBUG

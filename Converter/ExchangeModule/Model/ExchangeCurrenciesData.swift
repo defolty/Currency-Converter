@@ -18,7 +18,7 @@ struct ExchangeCurrenciesData: Decodable {
   }
 }
  
-struct Rates: Decodable { 
+struct Rates: Decodable {
   let currencyName: String?
   let rate: String?
   let rateForAmount: String?

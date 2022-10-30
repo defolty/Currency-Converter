@@ -9,13 +9,16 @@
 /* Begin PBXBuildFile section */
 		FB344EEC290303B0007C824B /* AllExchangedCurrenciesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB344EEB290303B0007C824B /* AllExchangedCurrenciesViewController.swift */; };
 		FB344EEE290303F7007C824B /* AllExchangedCurrenciesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB344EED290303F7007C824B /* AllExchangedCurrenciesPresenter.swift */; };
+		FB366C64290D43AA0077A723 /* UIView+ClearConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB366C63290D43AA0077A723 /* UIView+ClearConstraints.swift */; };
+		FB458DF5290F008D00647192 /* ExchangeCurrenciesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB458DF4290F008D00647192 /* ExchangeCurrenciesData.swift */; };
+		FB458DF7290F009A00647192 /* ExchangePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB458DF6290F009A00647192 /* ExchangePresenter.swift */; };
+		FB458DF9290F00A300647192 /* ExchangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB458DF8290F00A300647192 /* ExchangeViewController.swift */; };
 		FB62EED4276BCE0C00BDB70D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB62EED3276BCE0C00BDB70D /* Assets.xcassets */; };
 		FB62EED7276BCE0C00BDB70D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB62EED5276BCE0C00BDB70D /* LaunchScreen.storyboard */; };
 		FB6ECC30290165020038171A /* UIViewController+UIAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6ECC2F290165020038171A /* UIViewController+UIAlert.swift */; };
 		FB6ECC32290165400038171A /* String+CurrencyInputFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6ECC31290165400038171A /* String+CurrencyInputFormatting.swift */; };
 		FB6ECC35290165AD0038171A /* CurrenciesListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6ECC34290165AD0038171A /* CurrenciesListData.swift */; };
 		FB6ECC4229029BC10038171A /* UITextField+Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6ECC4129029BC10038171A /* UITextField+Padding.swift */; };
-		FB834E852770F26900105999 /* ExchangeCurrenciesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB834E842770F26900105999 /* ExchangeCurrenciesData.swift */; };
 		FB9005E42909974B00520D4B /* UIViewController+KeyboardObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9005E32909974B00520D4B /* UIViewController+KeyboardObserver.swift */; };
 		FB9005E6290999EB00520D4B /* UIResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9005E5290999EB00520D4B /* UIResponder.swift */; };
 		FBAB0EE128F17E5700E242DE /* CurrenciesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EE028F17E5700E242DE /* CurrenciesListViewController.swift */; };
@@ -24,18 +27,20 @@
 		FBAB0EEA28F1875F00E242DE /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EE928F1875F00E242DE /* Router.swift */; };
 		FBAB0EED28F48ED600E242DE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EEC28F48ED600E242DE /* SceneDelegate.swift */; };
 		FBAB0EF228F7249C00E242DE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAB0EF128F7249C00E242DE /* AppDelegate.swift */; };
-		FBC7780F28EDCBA200C9FB1D /* ExchangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC7780E28EDCBA200C9FB1D /* ExchangeViewController.swift */; };
 		FBC7781228EDF3E000C9FB1D /* LivePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC7781128EDF3E000C9FB1D /* LivePreview.swift */; };
 		FBDAA3AE2798BD6500CB89B7 /* FloatingPoint+NumberFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDAA3AD2798BD6500CB89B7 /* FloatingPoint+NumberFormatter.swift */; };
 		FBEA9C40276E7346004BF24C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEA9C3F276E7346004BF24C /* Constants.swift */; };
-		FBEAD4B427723A8900DDD50E /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEAD4B327723A8900DDD50E /* Indicator.swift */; };
-		FBFF2A6728EE1BBD00D3FCBF /* ExchangePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF2A6628EE1BBD00D3FCBF /* ExchangePresenter.swift */; };
+		FBEAD4B427723A8900DDD50E /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEAD4B327723A8900DDD50E /* ActivityIndicator.swift */; };
 		FBFF2A6C28EE2E6300D3FCBF /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF2A6B28EE2E6300D3FCBF /* NetworkService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		FB344EEB290303B0007C824B /* AllExchangedCurrenciesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllExchangedCurrenciesViewController.swift; sourceTree = "<group>"; };
 		FB344EED290303F7007C824B /* AllExchangedCurrenciesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllExchangedCurrenciesPresenter.swift; sourceTree = "<group>"; };
+		FB366C63290D43AA0077A723 /* UIView+ClearConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ClearConstraints.swift"; sourceTree = "<group>"; };
+		FB458DF4290F008D00647192 /* ExchangeCurrenciesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeCurrenciesData.swift; sourceTree = "<group>"; };
+		FB458DF6290F009A00647192 /* ExchangePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangePresenter.swift; sourceTree = "<group>"; };
+		FB458DF8290F00A300647192 /* ExchangeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewController.swift; sourceTree = "<group>"; };
 		FB62EEC7276BCE0C00BDB70D /* Converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Converter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB62EED3276BCE0C00BDB70D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB62EED6276BCE0C00BDB70D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -44,7 +49,6 @@
 		FB6ECC31290165400038171A /* String+CurrencyInputFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+CurrencyInputFormatting.swift"; sourceTree = "<group>"; };
 		FB6ECC34290165AD0038171A /* CurrenciesListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesListData.swift; sourceTree = "<group>"; };
 		FB6ECC4129029BC10038171A /* UITextField+Padding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Padding.swift"; sourceTree = "<group>"; };
-		FB834E842770F26900105999 /* ExchangeCurrenciesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeCurrenciesData.swift; sourceTree = "<group>"; };
 		FB9005E32909974B00520D4B /* UIViewController+KeyboardObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KeyboardObserver.swift"; sourceTree = "<group>"; };
 		FB9005E5290999EB00520D4B /* UIResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIResponder.swift; sourceTree = "<group>"; };
 		FBAB0EE028F17E5700E242DE /* CurrenciesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesListViewController.swift; sourceTree = "<group>"; };
@@ -53,12 +57,10 @@
 		FBAB0EE928F1875F00E242DE /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		FBAB0EEC28F48ED600E242DE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		FBAB0EF128F7249C00E242DE /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		FBC7780E28EDCBA200C9FB1D /* ExchangeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewController.swift; sourceTree = "<group>"; };
 		FBC7781128EDF3E000C9FB1D /* LivePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePreview.swift; sourceTree = "<group>"; };
 		FBDAA3AD2798BD6500CB89B7 /* FloatingPoint+NumberFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FloatingPoint+NumberFormatter.swift"; sourceTree = "<group>"; };
 		FBEA9C3F276E7346004BF24C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		FBEAD4B327723A8900DDD50E /* Indicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Indicator.swift; sourceTree = "<group>"; };
-		FBFF2A6628EE1BBD00D3FCBF /* ExchangePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangePresenter.swift; sourceTree = "<group>"; };
+		FBEAD4B327723A8900DDD50E /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		FBFF2A6B28EE2E6300D3FCBF /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,6 +75,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FB458DF0290F005D00647192 /* ExchangeModule */ = {
+			isa = PBXGroup;
+			children = (
+				FB458DF1290F006700647192 /* Model */,
+				FB458DF2290F006C00647192 /* View */,
+				FB458DF3290F007100647192 /* Presenter */,
+			);
+			path = ExchangeModule;
+			sourceTree = "<group>";
+		};
+		FB458DF1290F006700647192 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				FB458DF4290F008D00647192 /* ExchangeCurrenciesData.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		FB458DF2290F006C00647192 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FB458DF8290F00A300647192 /* ExchangeViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		FB458DF3290F007100647192 /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				FB458DF6290F009A00647192 /* ExchangePresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
+		FB458DFA290F00FC00647192 /* Builder+Router */ = {
+			isa = PBXGroup;
+			children = (
+				FBAB0EE728F1873900E242DE /* AssemblyBuilder.swift */,
+				FBAB0EE928F1875F00E242DE /* Router.swift */,
+			);
+			path = "Builder+Router";
+			sourceTree = "<group>";
+		};
 		FB62EEBE276BCE0C00BDB70D = {
 			isa = PBXGroup;
 			children = (
@@ -97,11 +142,10 @@
 				FBEA9C48276E7545004BF24C /* Supporting Files */,
 				FBEAD4B527723B3B00DDD50E /* Helpers */,
 				FBAB0EDE28F17CFA00E242DE /* Services */,
-				FBAB0EDF28F17DC700E242DE /* ExchangeModule */,
+				FB458DF0290F005D00647192 /* ExchangeModule */,
 				FBAB0EE428F17E7E00E242DE /* CurrenciesListModule */,
 				FB6ECC482902AA080038171A /* AllExchangedCurrenciesListModule */,
-				FBAB0EE728F1873900E242DE /* AssemblyBuilder.swift */,
-				FBAB0EE928F1875F00E242DE /* Router.swift */,
+				FB458DFA290F00FC00647192 /* Builder+Router */,
 			);
 			path = Converter;
 			sourceTree = "<group>";
@@ -124,6 +168,7 @@
 				FB6ECC4129029BC10038171A /* UITextField+Padding.swift */,
 				FB9005E32909974B00520D4B /* UIViewController+KeyboardObserver.swift */,
 				FB9005E5290999EB00520D4B /* UIResponder.swift */,
+				FB366C63290D43AA0077A723 /* UIView+ClearConstraints.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -169,16 +214,6 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		FBAB0EDF28F17DC700E242DE /* ExchangeModule */ = {
-			isa = PBXGroup;
-			children = (
-				FBEA9C41276E73B0004BF24C /* Model */,
-				FBC7781028EDCBA800C9FB1D /* View */,
-				FBFF2A6828EE1BC700D3FCBF /* Presenter */,
-			);
-			path = ExchangeModule;
-			sourceTree = "<group>";
-		};
 		FBAB0EE428F17E7E00E242DE /* CurrenciesListModule */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,22 +240,6 @@
 			path = Presenter;
 			sourceTree = "<group>";
 		};
-		FBC7781028EDCBA800C9FB1D /* View */ = {
-			isa = PBXGroup;
-			children = (
-				FBC7780E28EDCBA200C9FB1D /* ExchangeViewController.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		FBEA9C41276E73B0004BF24C /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				FB834E842770F26900105999 /* ExchangeCurrenciesData.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
 		FBEA9C48276E7545004BF24C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -240,19 +259,10 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		FBFF2A6828EE1BC700D3FCBF /* Presenter */ = {
-			isa = PBXGroup;
-			children = (
-				FBFF2A6628EE1BBD00D3FCBF /* ExchangePresenter.swift */,
-			);
-			name = Presenter;
-			path = ..;
-			sourceTree = "<group>";
-		};
 		FBFF2A6D28EE34C800D3FCBF /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				FBEAD4B327723A8900DDD50E /* Indicator.swift */,
+				FBEAD4B327723A8900DDD50E /* ActivityIndicator.swift */,
 				FBC7781128EDF3E000C9FB1D /* LivePreview.swift */,
 			);
 			path = Utils;
@@ -329,12 +339,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				FBFF2A6C28EE2E6300D3FCBF /* NetworkService.swift in Sources */,
-				FB834E852770F26900105999 /* ExchangeCurrenciesData.swift in Sources */,
+				FB458DF7290F009A00647192 /* ExchangePresenter.swift in Sources */,
 				FBAB0EE128F17E5700E242DE /* CurrenciesListViewController.swift in Sources */,
 				FBAB0EED28F48ED600E242DE /* SceneDelegate.swift in Sources */,
-				FBC7780F28EDCBA200C9FB1D /* ExchangeViewController.swift in Sources */,
 				FBAB0EEA28F1875F00E242DE /* Router.swift in Sources */,
+				FB458DF5290F008D00647192 /* ExchangeCurrenciesData.swift in Sources */,
 				FB6ECC35290165AD0038171A /* CurrenciesListData.swift in Sources */,
+				FB366C64290D43AA0077A723 /* UIView+ClearConstraints.swift in Sources */,
 				FBAB0EE828F1873900E242DE /* AssemblyBuilder.swift in Sources */,
 				FB9005E6290999EB00520D4B /* UIResponder.swift in Sources */,
 				FB6ECC32290165400038171A /* String+CurrencyInputFormatting.swift in Sources */,
@@ -343,11 +354,11 @@
 				FBAB0EF228F7249C00E242DE /* AppDelegate.swift in Sources */,
 				FBDAA3AE2798BD6500CB89B7 /* FloatingPoint+NumberFormatter.swift in Sources */,
 				FB6ECC4229029BC10038171A /* UITextField+Padding.swift in Sources */,
-				FBEAD4B427723A8900DDD50E /* Indicator.swift in Sources */,
-				FBFF2A6728EE1BBD00D3FCBF /* ExchangePresenter.swift in Sources */,
+				FBEAD4B427723A8900DDD50E /* ActivityIndicator.swift in Sources */,
 				FB9005E42909974B00520D4B /* UIViewController+KeyboardObserver.swift in Sources */,
 				FB344EEC290303B0007C824B /* AllExchangedCurrenciesViewController.swift in Sources */,
 				FB6ECC30290165020038171A /* UIViewController+UIAlert.swift in Sources */,
+				FB458DF9290F00A300647192 /* ExchangeViewController.swift in Sources */,
 				FBC7781228EDF3E000C9FB1D /* LivePreview.swift in Sources */,
 				FBEA9C40276E7346004BF24C /* Constants.swift in Sources */,
 			);
@@ -418,7 +429,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -473,7 +484,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -495,8 +506,8 @@
 				INFOPLIST_FILE = Converter/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -523,8 +534,8 @@
 				INFOPLIST_FILE = Converter/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

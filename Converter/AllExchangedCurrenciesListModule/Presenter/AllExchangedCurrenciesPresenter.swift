@@ -23,6 +23,7 @@ protocol AllExchangedCurrenciesPresenterProtocol {
   var isFiltered: Bool { get set }
   
   func numberOfRows() -> Int
+  func onDidDisappear()
   func getCurrenciesList()
   func exchangeAllCurrencies()
   func getCellText(indexPath: IndexPath) -> String
@@ -129,6 +130,10 @@ final class AllExchangedCurrenciesPresenter: AllExchangedCurrenciesPresenterProt
     guard let fromCurrency else { return Constants.Errors.errorNavBarTitle }
     let navBarTitle = "\(fromCurrency) \(Constants.Titles.allExchangedCurrenciesNavBarTitle)"
     return navBarTitle
+  }
+  
+  func onDidDisappear() {
+    router?.resetExchangeViewConstraints()
   }
 }
 

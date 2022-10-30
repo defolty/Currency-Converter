@@ -19,7 +19,7 @@ protocol AllExchangedCurrenciesViewProtocol: AnyObject {
 protocol AllExchangedViewDelegate: AnyObject {
   func sendBaseCurrency(_ currency: String)
 }
-
+ 
   // MARK: - Class Exchange All Currencies ViewController
 
 final class AllExchangedCurrenciesViewController: UIViewController {
@@ -29,7 +29,7 @@ final class AllExchangedCurrenciesViewController: UIViewController {
   private var tableView = UITableView()
   private var safeArea: UILayoutGuide!
   private let searchController = UISearchController(searchResultsController: nil)
-  
+   
   var presenter: AllExchangedCurrenciesPresenterProtocol!
   
   private var isFiltering: Bool {
@@ -55,6 +55,12 @@ final class AllExchangedCurrenciesViewController: UIViewController {
     setup()
   }
   
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
+     
+    presenter.onDidDisappear()
+  }
+   
   // MARK: - Config UI
   
   private func setup() {
@@ -70,9 +76,8 @@ final class AllExchangedCurrenciesViewController: UIViewController {
     view.addSubview(tableView)
     tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Identifiers.allExchangedCurrenciesListCellID)
     tableView.dataSource = self
-    tableView.allowsSelection = false
-    tableView.translatesAutoresizingMaskIntoConstraints = false
-    
+//    tableView.allowsSelection = false
+    tableView.translatesAutoresizingMaskIntoConstraints = false 
   }
   
   private func setupConstraints() {
@@ -139,6 +144,7 @@ extension AllExchangedCurrenciesViewController: UISearchResultsUpdating {
   // MARK: - TableView Data Source
  
 extension AllExchangedCurrenciesViewController: UITableViewDataSource {
+  
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return presenter.numberOfRows()
   }
@@ -157,5 +163,4 @@ extension AllExchangedCurrenciesViewController: UITableViewDataSource {
      
     return cell
   }
-}
-  
+} 

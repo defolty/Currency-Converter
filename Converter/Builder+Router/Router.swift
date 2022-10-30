@@ -8,16 +8,17 @@
 import UIKit
  
 protocol RouterProtocol {
-  func initialViewController()
-  func showCurrenciesList(isModal: Bool)
-  func showAllExchangedCurrecniesList()
+  func showExchangeViewController()
+  func showCurrenciesList()
+  func showAllExchangedCurrenciesList()
+  func resetExchangeViewConstraints()
   func popToRootViewController()
 }
  
 final class Router: RouterProtocol {
-   
-  var navigationController: UINavigationController!
+  
   var assemblyBuilder: AssemblyBuilderProtocol!
+  var navigationController: UINavigationController!
    
   var exchangeScreenView: ExchangeViewController?
   weak var currenciesListView: CurrenciesListViewController?
@@ -28,13 +29,19 @@ final class Router: RouterProtocol {
     self.assemblyBuilder = assemblyBuilder
   }
   
-  func initialViewController() {
+  // MARK: - Initial ViewController
+  
+  func showExchangeViewController() {
     let exchangeVC = assemblyBuilder.createExchangeModule(with: self)
     exchangeScreenView = exchangeVC
-    navigationController.viewControllers = [exchangeVC]
+    
+    navigationController.setViewControllers([exchangeVC], animated: true)
+    //navigationController.viewControllers = [exchangeVC]
   }
   
-  func showCurrenciesList(isModal: Bool) {
+  // MARK: - Currencies List
+  
+  func showCurrenciesList() {
     let currenciesVC = assemblyBuilder.createCurrenciesListModule(with: self)
     currenciesListView = currenciesVC
     
@@ -43,12 +50,14 @@ final class Router: RouterProtocol {
     navigationController.pushViewController(currenciesVC, animated: true)
   }
   
-  func showAllExchangedCurrecniesList() {
+  // MARK: - All Exchanged Currencies List
+  
+  func showAllExchangedCurrenciesList() {
     let allExchangedCurrencyVC = assemblyBuilder.createExchangedAllCurrencies(with: self)
     allExchangedCurrencyView = allExchangedCurrencyVC
     
     guard let exchangeScreenView else { return }
-    exchangeScreenView.baseCurrencyDelegate = allExchangedCurrencyView
+    exchangeScreenView.baseCurrencyDelegate = allExchangedCurrencyView 
     let targetVC = UINavigationController(rootViewController: allExchangedCurrencyVC)
     
     if #available(iOS 15.0, *) {
@@ -57,11 +66,16 @@ final class Router: RouterProtocol {
         sheet.prefersScrollingExpandsWhenScrolledToEdge = false
         sheet.prefersGrabberVisible = true
         sheet.prefersEdgeAttachedInCompactHeight = true
-        ///sheet.largestUndimmedDetentIdentifier = .medium
-        ///sheet.preferredCornerRadius = 50
+        sheet.largestUndimmedDetentIdentifier = .medium
       }
+      
       navigationController.present(targetVC, animated: true)
     }
+  }
+  
+  func resetExchangeViewConstraints() {
+    guard let exchangeScreenView else { return }
+    exchangeScreenView.resetConstraintsIfNeeded = true
   }
   
   func popToRootViewController() {

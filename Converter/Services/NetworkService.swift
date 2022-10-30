@@ -114,7 +114,7 @@ final class NetworkService: NetworkServiceProtocol {
     let request = NSMutableURLRequest(
       url: NSURL(string: url)! as URL,
       cachePolicy: .useProtocolCachePolicy,
-      timeoutInterval: 5.0
+      timeoutInterval: 15.0
     )
     request.httpMethod = Constants.Api.httpMethod
     request.allHTTPHeaderFields = Constants.Api.headers

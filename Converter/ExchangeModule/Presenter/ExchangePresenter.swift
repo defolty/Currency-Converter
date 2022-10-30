@@ -29,11 +29,11 @@ protocol ExchangeViewPresenterProtocol {
   var fromCurrency: String? { get set }
   var valueForFirstField: String? { get set }
   var valueForSecondField: String? { get set }
-  
+   
   func clearValues()
+  func selectNewCurrency()
   func swapCurrenciesButtons()
   func setValues(with rate: String)
-  func selectNewCurrency(modal: Bool)
   func getValuesFromView(value: String)
   func setNavigationBarTitle() -> String
   func showModalWithAllExchangedCurrencies()
@@ -65,7 +65,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   }
     
   // MARK: - Methods
-  
+   
   func updateSelectedCurrency(_ currency: String) {
     guard let selectedButton, let amount else { return }
     
@@ -88,7 +88,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   }
   
   func getValuesFromView(value: String) {
-    guard let fromCurrency, let toCurrency, let activeField else { return } 
+    guard let fromCurrency, let toCurrency, let activeField else { return }
     let safeValue = value.replacingOccurrences(of: " ", with: "")
      
     amount = safeValue
@@ -121,7 +121,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     }
   }
    
-  func setValues(with rate: String) {  
+  func setValues(with rate: String) {
     let rateForAmountAsDouble = Double(rate)
     
     guard let activeField else { return }
@@ -129,7 +129,7 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
     case .firstTextField:
       valueForSecondField = rateForAmountAsDouble?.fractionDigits(min: 2, max: 2, roundingMode: .halfEven)
     case .secondTextField:
-      valueForFirstField = rateForAmountAsDouble?.fractionDigits(min: 2, max: 2, roundingMode: .halfEven) 
+      valueForFirstField = rateForAmountAsDouble?.fractionDigits(min: 2, max: 2, roundingMode: .halfEven)
     }
     
     view?.presentIndicator(isShow: false)
@@ -153,10 +153,12 @@ final class ExchangePresenter: ExchangeViewPresenterProtocol {
   }
   
   func showModalWithAllExchangedCurrencies() {
-    router?.showAllExchangedCurrecniesList()
+    view?.onShowButtonAction = { [unowned self] in
+      router?.showAllExchangedCurrenciesList()
+    }
   }
     
-  func selectNewCurrency(modal: Bool) {
-      router?.showCurrenciesList(isModal: modal)
+  func selectNewCurrency() {
+      router?.showCurrenciesList()
   }
 }

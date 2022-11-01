@@ -194,22 +194,18 @@ final class ExchangeViewController: UIViewController {
   
   private func configureSwapButton() {
     let config = UIImage.SymbolConfiguration(
-      pointSize: 40,
-      weight: .regular,
-      scale: .default)
+      pointSize: 40, weight: .regular, scale: .default
+    )
     let image = UIImage(
       systemName: Constants.SystemName.swapButtonImage,
-      withConfiguration: config)
+      withConfiguration: config
+    )
     swapButtons.setImage(image, for: .normal)
     swapButtons.tintColor = .systemIndigo
     swapButtons.layer.cornerRadius = 12
     swapButtons.clipsToBounds = true
     swapButtons.translatesAutoresizingMaskIntoConstraints = false
-    swapButtons.addTarget(
-      self,
-      action: #selector(swapCurrencies),
-      for: .touchUpInside
-    )
+    swapButtons.addTarget(self, action: #selector(swapCurrencies), for: .touchUpInside)
   }
   
   private func initialValues() {
@@ -355,28 +351,6 @@ final class ExchangeViewController: UIViewController {
   
   // MARK: - Actions
   
-  private func passDataToPresenters() {
-    if let currencyDidSelected {
-      presenter.updateSelectedCurrency(currencyDidSelected)
-      
-      if presenter.selectedButton == .fromButton {
-        animateView(view: showAllExchangedCurrenciesList, hidden: false)
-        baseCurrencyDelegate?.sendBaseCurrency(currencyDidSelected)
-      }
-    }
-  }
-  
-  @objc
-  private func showAllExchangedCurrencies() {
-    if presenter.selectedButton == .fromButton {
-      guard let currencyDidSelected else { return }
-      changeMiddleViewFrame()
-      presenter.showModalWithAllExchangedCurrencies()
-      onShowButtonAction?()
-      baseCurrencyDelegate?.sendBaseCurrency(currencyDidSelected)
-    }
-  }
-  
   @objc
   private func selectCurrency(_ sender: UIButton) {
     let selectedButton: SelectedButtonCondition = sender ==
@@ -390,6 +364,17 @@ final class ExchangeViewController: UIViewController {
     }
     
     presenter.selectNewCurrency()
+  }
+  
+  @objc
+  private func showAllExchangedCurrencies() {
+    if presenter.selectedButton == .fromButton {
+      guard let currencyDidSelected else { return }
+      changeMiddleViewFrame()
+      presenter.showModalWithAllExchangedCurrencies()
+      onShowButtonAction?()
+      baseCurrencyDelegate?.sendBaseCurrency(currencyDidSelected)
+    }
   }
   
   @objc
@@ -407,6 +392,17 @@ final class ExchangeViewController: UIViewController {
     if let amountString = textField.text?.currencyInputFormatting() {
       textField.text = amountString
       presenter.getValuesFromView(value: amountString)
+    }
+  }
+  
+  private func passDataToPresenters() {
+    if let currencyDidSelected {
+      presenter.updateSelectedCurrency(currencyDidSelected)
+      
+      if presenter.selectedButton == .fromButton {
+        animateView(view: showAllExchangedCurrenciesList, hidden: false)
+        baseCurrencyDelegate?.sendBaseCurrency(currencyDidSelected)
+      }
     }
   }
   

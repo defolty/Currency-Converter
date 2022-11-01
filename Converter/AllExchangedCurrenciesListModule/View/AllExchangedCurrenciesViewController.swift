@@ -76,7 +76,7 @@ final class AllExchangedCurrenciesViewController: UIViewController {
     view.addSubview(tableView)
     tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Identifiers.allExchangedCurrenciesListCellID)
     tableView.dataSource = self
-//    tableView.allowsSelection = false
+    tableView.allowsSelection = false
     tableView.translatesAutoresizingMaskIntoConstraints = false 
   }
   

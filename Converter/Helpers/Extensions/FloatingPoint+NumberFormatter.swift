@@ -6,10 +6,7 @@
 //
 
 import UIKit
-/*
- стоит переименовать, так как
- этот тип не возвращает то, что ожидается по имени
- */
+ 
 extension Formatter {
   static let currentNumber = NumberFormatter()
 }

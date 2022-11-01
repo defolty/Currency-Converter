@@ -4,7 +4,7 @@
 //
 //  Created by Nikita Nesporov on 26.10.2022.
 //
- 
+  
 import UIKit
 
 extension UIViewController {
@@ -24,7 +24,8 @@ extension UIViewController {
     )
   }
    
-  @objc func keyboardNotifications(notification: NSNotification) {
+  @objc
+  func keyboardNotifications(notification: NSNotification) {
     
     var txtFieldY : CGFloat = 0.0
     var frame = CGRect(x: 0, y: 0, width: 0, height: 0)

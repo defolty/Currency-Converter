@@ -16,7 +16,6 @@ protocol AssemblyBuilderProtocol {
 final class AssemblyBuilder: AssemblyBuilderProtocol {
   
   func createExchangeModule(with router: RouterProtocol) -> ExchangeViewController {
-     
     let view = ExchangeViewController()
     let networkService = NetworkService()
     let presenter = ExchangePresenter(
@@ -29,7 +28,6 @@ final class AssemblyBuilder: AssemblyBuilderProtocol {
   }
   
   func createCurrenciesListModule(with router: RouterProtocol) -> CurrenciesListViewController {
- 
     let view = CurrenciesListViewController()
     let networkService = NetworkService()
     let presenter = CurrenciesListPresenter(
@@ -41,8 +39,7 @@ final class AssemblyBuilder: AssemblyBuilderProtocol {
     return view
   }
   
-  func createExchangedAllCurrencies(with router: RouterProtocol) -> AllExchangedCurrenciesViewController {
-     
+  func createExchangedAllCurrencies(with router: RouterProtocol) -> AllExchangedCurrenciesViewController { 
     let view = AllExchangedCurrenciesViewController()
     let networkService = NetworkService()
     let presenter = AllExchangedCurrenciesPresenter(

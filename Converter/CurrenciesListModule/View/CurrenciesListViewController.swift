@@ -141,14 +141,10 @@ extension CurrenciesListViewController: UITableViewDataSource {
     )
     cell.textLabel?.textAlignment = .center
     
-//    cell.textLabel?.text = isFiltering
-//    ? presenter.filteredList?[indexPath.row]
-//    : presenter.currenciesList?[indexPath.row]
-     
     cell.textLabel?.text = isFiltering
     ? presenter.filteredList?[indexPath.row]
-    : "\(presenter.currenciesList?[indexPath.row] ?? "bad cell 1") (\(presenter.currenciesDetailList?[indexPath.row] ?? "bad cell"))"
-     
+    : presenter.currenciesList?[indexPath.row]
+      
     return cell
   }
 }

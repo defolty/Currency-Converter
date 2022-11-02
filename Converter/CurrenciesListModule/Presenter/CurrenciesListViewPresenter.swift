@@ -12,7 +12,6 @@ import Foundation
 protocol CurrenciesListViewPresenterProtocol {
    
   var currenciesList: [String]? { get set }
-  var currenciesDetailList: [String]? { get set }
   var filteredList: [String]? { get set }
   var isFiltered: Bool { get set }
    
@@ -34,8 +33,6 @@ final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
   var currenciesList: [String]?
   var filteredList: [String]?
   var isFiltered = false
-  
-  var currenciesDetailList: [String]?
    
   init(view: CurrenciesListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
     self.view = view
@@ -63,9 +60,6 @@ final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
       switch result {
       case .success(let list):
         self.currenciesList = list?.currencies.map { $0.key }.sorted()
-        
-        self.currenciesDetailList = list?.currencies.map { $0.value }.sorted() 
-        
         self.view?.onSuccess()
       case .failure(let error):
         self.view?.onFailure(error: error)

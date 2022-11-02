@@ -62,7 +62,10 @@ final class CurrenciesListViewController: UIViewController {
   private func setupTableView() {
     safeArea = view.layoutMarginsGuide
     view.addSubview(tableView)
-    tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.Identifiers.currenciesListCellID)
+    tableView.register(
+      UITableViewCell.self,
+      forCellReuseIdentifier: Constants.Identifiers.currenciesListCellID
+    )
     tableView.delegate = self
     tableView.dataSource = self
     tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -138,10 +141,14 @@ extension CurrenciesListViewController: UITableViewDataSource {
     )
     cell.textLabel?.textAlignment = .center
     
+//    cell.textLabel?.text = isFiltering
+//    ? presenter.filteredList?[indexPath.row]
+//    : presenter.currenciesList?[indexPath.row]
+     
     cell.textLabel?.text = isFiltering
     ? presenter.filteredList?[indexPath.row]
-    : presenter.currenciesList?[indexPath.row]
-    
+    : "\(presenter.currenciesList?[indexPath.row] ?? "bad cell 1") (\(presenter.currenciesDetailList?[indexPath.row] ?? "bad cell"))"
+     
     return cell
   }
 }

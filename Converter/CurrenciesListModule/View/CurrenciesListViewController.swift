@@ -98,8 +98,7 @@ final class CurrenciesListViewController: UIViewController {
  
  // MARK: - Extension CurrenciesListViewProtocol
 
-extension CurrenciesListViewController: CurrenciesListViewProtocol {
-  
+extension CurrenciesListViewController: CurrenciesListViewProtocol { 
   func onSuccess() {
     tableView.reloadData()
   }
@@ -111,7 +110,7 @@ extension CurrenciesListViewController: CurrenciesListViewProtocol {
     )
   }
 }
-
+ 
  // MARK: - Extension UISearchController
 
 extension CurrenciesListViewController: UISearchResultsUpdating {
@@ -148,7 +147,7 @@ extension CurrenciesListViewController: UITableViewDataSource {
     return cell
   }
 }
-
+ 
  // MARK: - TableView Delegate
 
 extension CurrenciesListViewController: UITableViewDelegate {

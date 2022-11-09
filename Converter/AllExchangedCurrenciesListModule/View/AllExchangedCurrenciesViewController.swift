@@ -126,7 +126,7 @@ extension AllExchangedCurrenciesViewController: AllExchangedCurrenciesViewProtoc
     )
   }
 }
-
+  
   // MARK: - Extension Search Controller
 
 extension AllExchangedCurrenciesViewController: UISearchResultsUpdating {
@@ -156,9 +156,9 @@ extension AllExchangedCurrenciesViewController: UITableViewDataSource {
     )
     cell.textLabel?.textAlignment = .center
     cell.textLabel?.adjustsFontSizeToFitWidth = true
-     
+      
     cell.textLabel?.text = isFiltering
-    ? presenter.filteredList?[indexPath.row]
+    ? presenter.getFilteredCellText(indexPath: indexPath)
     : presenter.getCellText(indexPath: indexPath)
      
     return cell

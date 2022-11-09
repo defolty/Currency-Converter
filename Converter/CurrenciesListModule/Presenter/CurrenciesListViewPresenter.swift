@@ -14,14 +14,14 @@ protocol CurrenciesListViewPresenterProtocol {
   var currenciesList: [String]? { get set }
   var filteredList: [String]? { get set }
   var isFiltered: Bool { get set }
-   
+    
   func getCurrenciesList()
   func numberOfRows() -> Int
    
   func filterList(by text: String, state: Bool)
   func popToRootViewController()
 }
-
+  
   // MARK: - Currencies List Presenter
 
 final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
@@ -29,7 +29,7 @@ final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
   weak var view: CurrenciesListViewProtocol!
   private let networkService: NetworkServiceProtocol!
   private var router: RouterProtocol!
-  
+   
   var currenciesList: [String]?
   var filteredList: [String]?
   var isFiltered = false
@@ -38,6 +38,7 @@ final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
     self.view = view
     self.networkService = networkService
     self.router = router
+    
     getCurrenciesList()
   }
   
@@ -66,7 +67,7 @@ final class CurrenciesListPresenter: CurrenciesListViewPresenterProtocol {
       }
     }
   }
-  
+   
   func popToRootViewController() {
     router?.popToRootViewController()
   }

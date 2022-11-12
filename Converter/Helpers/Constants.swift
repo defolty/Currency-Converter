@@ -10,6 +10,7 @@ import Foundation
 enum Constants {
   
   enum Api {
+    static let httpMethod = "GET"
     static let apiKey = "f96847c424msh3226f07e3f2ade4p1464a8jsn93f99a3b39e5"
     static let firstPartUrl = "https://currency-converter5.p.rapidapi.com/currency/convert?from="
     static let currenciesListUrl = "https://currency-converter5.p.rapidapi.com/currency/list?apiKey=\(apiKey)&format=json"
@@ -17,9 +18,8 @@ enum Constants {
       "x-rapidapi-host": "currency-converter5.p.rapidapi.com",
       "x-rapidapi-key": "\(apiKey)"
     ]
-    static let httpMethod = "GET"
   }
-  
+   
   enum Identifiers {
     static let currenciesListCellID = "cell"
     static let allExchangedCurrenciesListCellID = "allCurrenciesCell"

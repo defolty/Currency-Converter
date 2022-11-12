@@ -45,8 +45,8 @@ protocol ExchangeViewPresenterProtocol {
 
 final class ExchangePresenter: ExchangeViewPresenterProtocol {
   weak var view: ExchangeViewProtocol!
-  let router: RouterProtocol!
-  let networkService: NetworkServiceProtocol!
+  private let router: RouterProtocol!
+  private let networkService: NetworkServiceProtocol!
   var exchangeModel: ExchangeCurrenciesData?
    
   var selectedButton: SelectedButtonCondition?

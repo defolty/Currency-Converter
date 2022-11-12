@@ -15,16 +15,17 @@ protocol AllExchangedCurrenciesPresenterProtocol {
   var keysArraySorted: [String]? { get set }
   var valuesArraySorted: [String]? { get set }
   var currinciesWithRate: [String: String] { get set }
-  
+   
   var fromCurrency: String? { get set }
   
   var filteredList: [String]? { get set }
+  var filteredDict: [String: String] { get set }
   var isFiltered: Bool { get set }
   
-  func numberOfRows() -> Int
   func onDidDisappear()
   func getCurrenciesList()
   func exchangeAllCurrencies()
+  func numberOfRows() -> Int
   func getCellText(indexPath: IndexPath) -> String
   func getFilteredCellText(indexPath: IndexPath) -> String
   func getNavigationBarTitle() -> String
@@ -47,8 +48,9 @@ final class AllExchangedCurrenciesPresenter: AllExchangedCurrenciesPresenterProt
   var fromCurrency: String?
   
   var filteredList: [String]?
+  var filteredDict: [String: String] = [:]
   var isFiltered = false
-  
+   
   init(view: AllExchangedCurrenciesViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol?) {
     self.view = view
     self.networkService = networkService
@@ -56,6 +58,16 @@ final class AllExchangedCurrenciesPresenter: AllExchangedCurrenciesPresenterProt
   }
   
   // MARK: - Methods
+  
+  private func setDict(key: String, value: String) {
+    currinciesWithRate[key] = value
+    let sortedCurrenciesWithRate = currinciesWithRate.sorted(by: { $0.key < $1.key })
+    
+    keysArraySorted = Array(sortedCurrenciesWithRate.map({ $0.key }))
+    valuesArraySorted = Array(sortedCurrenciesWithRate.map({ $0.value }))
+    
+    view?.onSuccess()
+  }
   
   func numberOfRows() -> Int {
     isFiltered ? filteredList?.count ?? 0 : keysArraySorted?.count ?? 0
@@ -65,6 +77,7 @@ final class AllExchangedCurrenciesPresenter: AllExchangedCurrenciesPresenterProt
     isFiltered = state
     guard let keysArraySorted else { return }
     filteredList = keysArraySorted.filter { $0.lowercased().contains(text.lowercased()) }
+    filteredDict = currinciesWithRate.filter ({ $0.key.contains(text.uppercased()) })
   }
   
   func getCurrenciesList() {
@@ -101,17 +114,7 @@ final class AllExchangedCurrenciesPresenter: AllExchangedCurrenciesPresenterProt
       }
     }
   }
-     
-  func setDict(key: String, value: String) {
-    currinciesWithRate[key] = value
-    let sortedCurrenciesWithRate = currinciesWithRate.sorted(by: { $0.key < $1.key })
-    
-    keysArraySorted = Array(sortedCurrenciesWithRate.map({ $0.key }))
-    valuesArraySorted = Array(sortedCurrenciesWithRate.map({ $0.value }))
-    
-    view?.onSuccess()
-  }
-  
+   
   func getCellText(indexPath: IndexPath) -> String {
     guard let keysArraySorted, let fromCurrency, let valuesArraySorted else { return Constants.Errors.errorGetCellText }
     let cellText = "1 \(fromCurrency) = \(valuesArraySorted[indexPath.row]) \(keysArraySorted[indexPath.row])"
@@ -119,8 +122,8 @@ final class AllExchangedCurrenciesPresenter: AllExchangedCurrenciesPresenterProt
   }
   
   func getFilteredCellText(indexPath: IndexPath) -> String {
-    guard let filteredList, let fromCurrency, let valuesArraySorted else { return Constants.Errors.errorGetCellText }
-    let cellText = "1 \(fromCurrency) = \(valuesArraySorted[indexPath.row]) \(filteredList[indexPath.row])"
+    guard let fromCurrency else { return Constants.Errors.errorGetCellText }  
+    let cellText = "1 \(fromCurrency) = \(Array(filteredDict)[indexPath.row].value) \(Array(filteredDict)[indexPath.row].key)"
     return cellText
   }
   
@@ -134,6 +137,4 @@ final class AllExchangedCurrenciesPresenter: AllExchangedCurrenciesPresenterProt
     router?.resetExchangeViewConstraints()
   }
 }
-
-
-
+ 
